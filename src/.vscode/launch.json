@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "ros",
+            "command": "roslaunch",
+            "name": "lane_detect",
+            "package": "lane_detect",
+            "target": "lane_detect.launch",
+            "debugSettings": "debugSettings"
+        }
+    ]
+}

@@ -1,0 +1,44 @@
+Mat DetectLane::preProcess(const Mat &src)
+{
+    Mat imgThresholded, imgHSV, dst;
+
+    cvtColor(src, imgHSV, COLOR_BGR2HSV);
+    
+    Mat blur_img;
+    cv::GaussianBlur(imgHSV, blur_img, Size(17,17), 0.);
+//cout << "test";
+    vector<Point> list_point = {Point(0,240), Point(0,150), Point(100,80), Point(220,80), Point(320,150), Point(320,240)};
+    Mat maskROI = Mat::zeros(Size(240, 320), CV_8UC3);
+    cv::fillConvexPoly(maskROI, list_point, Scalar(255,255,255));
+    cv::bitwise_and(maskROI, blur_img, blur_img);
+//cout << "test";
+    Mat mask1;
+    cv::inRange(imgHSV, Scalar(41,5,53), Scalar(93,31,102), mask1);
+    Mat mask2;
+    cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
+    Mat maskShadow;
+    cv::inRange(imgHSV, Scalar(70,18,12), Scalar(137,155,74), maskShadow);
+    Mat maskCombined;
+    cv::bitwise_or(mask1, mask2, maskCombined);
+    cv::bitwise_or(maskCombined,maskShadow, maskCombined);
+
+    vector<vector<Point>> contours;
+    cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    cout << "test";
+    vector<Point> max_contour;
+    double max_area = 0;
+    for (int i = 0; i < contours.size(); i++){
+        double cnt_area = cv::contourArea(contours[i]);
+        if (cnt_area > max_area){
+            max_area = cnt_area;
+            max_contour = contours[i];
+        }
+    }
+    cv::drawContours(maskCombined, max_contour, -1, 255, 2);
+    imshow("Binary", maskCombined);
+    // for (int i = 0; i < points2.size(); i++)
+    dst = birdViewTranform(maskCombined);
+
+    imshow("Bird View", dst);
+    return dst;
+}

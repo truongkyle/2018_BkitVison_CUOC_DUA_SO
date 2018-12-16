@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "limits": "cpp"
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages",
+        "/mnt/143E05263E05028A/Spark/spark-2.4.0-bin-hadoop2.7/python/lib/py4j-0.10.7-src.zip",
+        "/mnt/143E05263E05028A/Spark/spark-2.4.0-bin-hadoop2.7/python/"
+    ]
+}

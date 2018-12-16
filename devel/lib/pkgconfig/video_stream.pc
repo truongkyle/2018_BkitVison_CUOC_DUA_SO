@@ -1,0 +1,8 @@
+prefix=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel
+
+Name: video_stream
+Description: Description of video_stream
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib 
+Requires: 

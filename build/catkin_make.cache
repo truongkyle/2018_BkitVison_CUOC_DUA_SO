@@ -1,0 +1,2 @@
+file_server:lane_detect:mastering_ros_demo_pkg:video_stream
+-DCMAKE_BUILD_TYPE=Debug -DCATKIN_DEVEL_PREFIX=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel -DCMAKE_INSTALL_PREFIX=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/install -G Unix Makefiles
