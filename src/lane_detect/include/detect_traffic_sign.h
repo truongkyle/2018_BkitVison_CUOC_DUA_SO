@@ -15,7 +15,8 @@ using namespace cv;
 enum TRAFFIC_SIGN {
     TURN_LEFT,
     TURN_RIGHT,
-    NONE
+    NONE,
+    ERROR
 };
 class DetectSign {
     public:
@@ -24,6 +25,7 @@ class DetectSign {
         static void store_image(Mat& image);
         static Mat& get_image();
     private:
+        static int init_flag;
         static Mat* image;
         static CascadeClassifier left_traffic_sign_detect;
         static CascadeClassifier right_traffic_sign_detect;

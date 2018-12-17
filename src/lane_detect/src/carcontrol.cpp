@@ -369,6 +369,10 @@ void CarControl::driverCar(DetectLane* detect){
         CarControl::preSpeed = 40;
         TRAFFIC_SIGN temp;
         temp = DetectSign::get_traffic_sign(true);
+        if (temp == ERROR) {
+            cout << "Check haar path" << endl;
+            return;
+        }
         if (temp != NONE) {
             turn = temp;
             cooldown = 3;
