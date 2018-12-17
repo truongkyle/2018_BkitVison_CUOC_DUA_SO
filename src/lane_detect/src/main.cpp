@@ -13,7 +13,7 @@
 #define VIDEO_OR_IMAGE "video" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_left.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_right.xml"
-#define STREAM true
+#define STREAM false
 
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH); 
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT); 
@@ -32,14 +32,15 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
         DetectSign::store_image(cv_ptr->image);
-        cv::imshow("View", cv_ptr->image);
         //waitKey(1);
         detect->update(cv_ptr->image);
         car->driverCar(detect);
+        cv::imshow("View", cv_ptr->image);
         //std::string path = "/home/hoquangnam/Documents/CuocDuaSo/Ảnh fastest/Test" + std::to_string(count) + ".jpg";
         //cv::imwrite(path, cv_ptr->image);
         //video.write(cv_ptr->image);
         //count++;
+        //cv::waitKey(30);
     }
     catch (cv_bridge::Exception& e)
     {
@@ -57,9 +58,10 @@ void videoProcess()
         if (src.empty()) break;
         //cout << "test" << endl;
         //DetectSign::get_traffic_sign(src, true);
-        imshow("View", src);
+        DetectSign::store_image(src);
         detect->update(src);
         car->driverCar(detect);
+        imshow("View", src);
         waitKey(30);
     }
 }
@@ -68,10 +70,10 @@ void imageProcess(){
     while(true){
         if (src.empty()) return;
         //DetectSign::get_traffic_sign(src, true);
-        cv::imshow("View", src);
+        DetectSign::store_image(src);
         detect->update(src);
         car->driverCar(detect);
-        //cv::imshow("Test", CarControl::maskROI);
+        cv::imshow("View", src);       //cv::imshow("Test", CarControl::maskROI);
         waitKey(30);
         //detectAndDisplay(src);
         //waitKey(30);

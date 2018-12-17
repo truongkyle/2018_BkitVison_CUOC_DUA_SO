@@ -6,7 +6,7 @@
 #define LIM_DIST_SPEED 5
 #define LIM_DIST_ANGLE 3
 
-
+int cooldown = 0;
 Mat* CarControl::maskROI;
 Mat CarControl::maskRoiLane;
 Mat CarControl::maskRoiIntersection;
@@ -361,15 +361,22 @@ void CarControl::driverCar(DetectLane* detect){
     vecRightAngle = Vec2f(RightAboveAngleA.x - RightBelowAngleA.x, RightAboveAngleA.y - RightBelowAngleA.y);
     vecRightAngle = vecRightAngle / cv::norm(vecRightAngle);
     if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 || 
-        vecLeftAngle.dot(vecRightAngle) < 0.99 ||
-        vecLeftAngle.dot(vecLeftSpeed) < 0.99 ||
-        vecRightAngle.dot(vecRightSpeed) < 0.99){
+        vecLeftAngle.dot(vecRightAngle) < 0.98 ||
+        vecLeftAngle.dot(vecLeftSpeed) < 0.98 ||
+        vecRightAngle.dot(vecRightSpeed) < 0.98){
         cout << vecLeftSpeed.dot(vecRightSpeed) << " " << vecLeftAngle.dot(vecRightAngle) << endl;
         cout << "Sap toi nga re" << null_count++ << endl;
-        CarControl::preSpeed = 30;
-        if (DetectSign::get_traffic_sign() != NONE && turn == NONE) turn = DetectSign::get_traffic_sign();
+        CarControl::preSpeed = 40;
+        TRAFFIC_SIGN temp;
+        temp = DetectSign::get_traffic_sign(true);
+        if (temp != NONE) {
+            turn = temp;
+            cooldown = 3;
+        }
+        else if (cooldown > 0 && turn != NONE) cooldown = 3;
+        //else if (!cooldown) turn = NONE;
         if (turn == NONE) {
-            //cout << "Di thang" << endl;
+            cout << "Di thang" << endl;
             CarControl::preSteer = (LeftBelowSpeedA + RightBelowSpeedA) / 2;
         }
         else if(turn == TURN_LEFT)  {
@@ -380,11 +387,15 @@ void CarControl::driverCar(DetectLane* detect){
             cout << "Re phai" << endl;
             CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
         }
+        CarControl::maskROI = &maskRoiIntersection;
     }
     else {
         CarControl::preSteer = (LeftBelowSpeedA + RightBelowSpeedA) / 2;
         CarControl::preSpeed = 60;
-        turn = NONE;
+        CarControl::maskROI = &maskRoiLane;
+        //turn = NONE;
+        if (cooldown > 0) cooldown--;
+        else if (!cooldown) turn = NONE;
         /*
         if (RightBelow != DetectLane::null && LeftBelow != DetectLane::null)
             CarControl::preSteer = (RightBelow + LeftBelow) / 2;

@@ -24,21 +24,21 @@ TRAFFIC_SIGN DetectSign::get_traffic_sign(bool draw){
 
 bool DetectSign::check_traffic_sign_left(bool draw){
     vector<Rect> traffic_sign_region;
-    left_traffic_sign_detect.detectMultiScale(DetectSign::get_image(), traffic_sign_region, 1.3, 1);
+    left_traffic_sign_detect.detectMultiScale(DetectSign::get_image(), traffic_sign_region, 1.1, 1);
     if (!traffic_sign_region.size()) return false;
     if (draw)
         for (Rect region : traffic_sign_region)
-            cv::rectangle(DetectSign::get_image(), region, Scalar(0,0,255), 2);
+            cv::rectangle(DetectSign::get_image(), traffic_sign_region[0], Scalar(0,0,255), 2);
     return true;
 }
 
 bool DetectSign::check_traffic_sign_right(bool draw){
     vector<Rect> traffic_sign_region;
     //cout << cv::Size() << endl;
-    right_traffic_sign_detect.detectMultiScale(DetectSign::get_image(), traffic_sign_region, 1.3, 1);
+    right_traffic_sign_detect.detectMultiScale(DetectSign::get_image(), traffic_sign_region, 1.1, 1);
     if (!traffic_sign_region.size()) return false;
     if (draw)
         for (Rect region : traffic_sign_region)
-            cv::rectangle(DetectSign::get_image(), region, Scalar(0,0,255), 2);
+            cv::rectangle(DetectSign::get_image(), traffic_sign_region[0], Scalar(0,0,255), 2);
     return true;
 }
