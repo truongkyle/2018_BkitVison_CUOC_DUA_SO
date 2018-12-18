@@ -13,7 +13,7 @@
 #define VIDEO_OR_IMAGE "video" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_left.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_right.xml"
-#define STREAM false
+#define STREAM true
 
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH); 
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT); 

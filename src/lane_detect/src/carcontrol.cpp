@@ -375,9 +375,9 @@ void CarControl::driverCar(DetectLane* detect){
         }
         if (temp != NONE) {
             turn = temp;
-            cooldown = 3;
+            cooldown = 5;
         }
-        else if (cooldown > 0 && turn != NONE) cooldown = 3;
+        else if (cooldown > 0 && turn != NONE) cooldown = 5;
         //else if (!cooldown) turn = NONE;
         if (turn == NONE) {
             cout << "Di thang" << endl;

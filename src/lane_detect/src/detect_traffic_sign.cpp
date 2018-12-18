@@ -37,7 +37,7 @@ bool DetectSign::check_traffic_sign_left(bool draw){
     if (!traffic_sign_region.size()) return false;
     if (draw)
         for (Rect region : traffic_sign_region)
-            cv::rectangle(DetectSign::get_image(), traffic_sign_region[0], Scalar(0,0,255), 2);
+            cv::rectangle(DetectSign::get_image(), region, Scalar(0,0,255), 2);
     return true;
 }
 
@@ -48,6 +48,6 @@ bool DetectSign::check_traffic_sign_right(bool draw){
     if (!traffic_sign_region.size()) return false;
     if (draw)
         for (Rect region : traffic_sign_region)
-            cv::rectangle(DetectSign::get_image(), traffic_sign_region[0], Scalar(0,0,255), 2);
+            cv::rectangle(DetectSign::get_image(), region, Scalar(0,0,255), 2);
     return true;
 }
