@@ -30,6 +30,7 @@ add_library(api_lane_detection
   src/detectlane.cpp
   src/carcontrol.cpp
   src/detect_traffic_sign.cpp
+  src/polyfit.cpp
 )
 
 add_executable(lane_detect src/main.cpp)

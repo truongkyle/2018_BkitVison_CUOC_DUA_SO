@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/carcontrol.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/detect_traffic_sign.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/detectlane.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o"
+  "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

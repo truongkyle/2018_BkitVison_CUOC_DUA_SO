@@ -12,9 +12,27 @@
 
 using namespace std;
 using namespace cv;
-
+float angleLine(const Vec4f& line1, const Vec4f& line2);
+Vec4f createLine(const Point& pnt1, const Point& pnt2);
+float dist_point_point(const Point& pnt1, const Point& pnt2);
+float dist_point_line(const Point& pnt, const Vec4f& line);
+float signed_dist_point_line(const Point& pnt, const Vec4f& line);
+Point intersection (const Vec4f& line1, Vec4f& line2);
+float calc_X(const int& y, const Vec4f& line);
+float calc_Y(const int& x, const Vec4f& line);
 //class CarControl;
-
+#define SKYLINE 85
+//#define SKYLINE 85
+// For birdViewTranform
+#define IMAGE_WIDTH 320
+#define IMAGE_HEIGHT 240
+#define BIRDVIEW_WIDTH 240
+#define BIRDVIEW_HEIGHT 320
+#define VERTICAL 0
+#define HORIZONTAL 1
+#define slideThickness 10
+extern Point2f src_vertices[4];
+extern Point2f dst_vertices[4];
 class DetectLane
 {
 public:
@@ -26,13 +44,26 @@ public:
     vector<Point> getLeftLane();
     vector<Point> getRightLane();
 
-    static int slideThickness;
+    vector<Point> getLeftLaneRaw(){
+        return leftLaneRaw;
+    };
+    vector<Point> getRightLaneRaw(){
+        return rightLaneRaw;
+    }
+    //int getLeftLaneSize(){
+    //    return leftLane_size;
+    //}
+    //int getRightLaneSize(){
+    //    return rightLane_size;
+    //}
 
-    static int BIRDVIEW_WIDTH;
-    static int BIRDVIEW_HEIGHT;
+    //static int slideThickness;
 
-    static int VERTICAL;
-    static int HORIZONTAL;
+    //static int BIRDVIEW_WIDTH;
+    //static int BIRDVIEW_HEIGHT;
+
+    //static int VERTICAL;
+    //static int HORIZONTAL;
 
     static Point null; //
 
@@ -47,21 +78,32 @@ private:
     void fillLane(Mat &src);
     vector<Mat> splitLayer(const Mat &src, int dir = VERTICAL);
     vector<vector<Point> > centerRoadSide(const vector<Mat> &src, int dir = VERTICAL);
-    void detectLeftRight(const vector<vector<Point> > &points);
+    //void detectLeftRight(const vector<vector<Point> > &points);
+    void detectLeftRight(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw);
+    void updateLeftRight(const vector<Point>& leftRaw, const vector<Point>& rightRaw, vector<Point>& left, vector<Point>& right);
     Mat laneInShadow(const Mat &src);
-
+    /*
     int minThreshold[3] = {0, 0, 180};
-    int maxThreshold[3] = {179, 30, 255};
+    int maxThreshold[3] = {179, 30, 255};*/
+    //int minThreshold[3] = {101, 68, 0};
+    //int maxThreshold[3] = {126, 196, 255};
+    int minThreshold[3] = {55, 155, 0};
+    //int minThreshold[3] = {55, 93, 0};
+    int maxThreshold[3] = {179, 255, 184};
     int minShadowTh[3] = {90, 43, 36};
     int maxShadowTh[3] = {120, 81, 171};
+    int minRoadThreshold[3] = {55, 155, 0};
+    int maxRoadThreshold[3] = {179, 255, 184};
     int minLaneInShadow[3] = {90, 43, 97};
     int maxLaneInShadow[3] = {120, 80, 171};
     int binaryThreshold = 180;
 
-    int skyLine = 85;
     int shadowParam = 40;
 
-    vector<Point> leftLane, rightLane;
+    vector<Point> leftLane, rightLane; //, middleLane;
+    vector<Point> leftBound, rightBound;
+    vector<Point> leftLaneRaw, rightLaneRaw;
+    //vector<Point> leftBoundRaw, rightBoundRaw;
 };
 
 #endif

@@ -129,11 +129,36 @@ lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o.prov
 lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o.provides.build: lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o
 
 
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o: lane_detect/CMakeFiles/api_lane_detection.dir/flags.make
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o -c /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp
+
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.i"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp > CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.i
+
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.s"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp -o CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.s
+
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.requires:
+
+.PHONY : lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.requires
+
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.provides: lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.requires
+	$(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.provides.build
+.PHONY : lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.provides
+
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.provides.build: lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o
+
+
 # Object files for target api_lane_detection
 api_lane_detection_OBJECTS = \
 "CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o" \
 "CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o" \
-"CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o"
+"CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o" \
+"CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o"
 
 # External object files for target api_lane_detection
 api_lane_detection_EXTERNAL_OBJECTS =
@@ -141,9 +166,10 @@ api_lane_detection_EXTERNAL_OBJECTS =
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/build.make
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so: lane_detect/CMakeFiles/api_lane_detection.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so"
 	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/api_lane_detection.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -154,6 +180,7 @@ lane_detect/CMakeFiles/api_lane_detection.dir/build: /home/hoquangnam/Documents/
 lane_detect/CMakeFiles/api_lane_detection.dir/requires: lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o.requires
 lane_detect/CMakeFiles/api_lane_detection.dir/requires: lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o.requires
 lane_detect/CMakeFiles/api_lane_detection.dir/requires: lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o.requires
+lane_detect/CMakeFiles/api_lane_detection.dir/requires: lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o.requires
 
 .PHONY : lane_detect/CMakeFiles/api_lane_detection.dir/requires
 

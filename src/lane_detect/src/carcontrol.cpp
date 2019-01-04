@@ -1,11 +1,20 @@
 #include "detectlane.h"
 #include "carcontrol.h"
 #include "detect_traffic_sign.h"
-#define DIST_SPEED 15
-#define DIST_ANGLE 3
-#define LIM_DIST_SPEED 5
-#define LIM_DIST_ANGLE 3
+#define DIST_SPEED 10
+#define DIST_SPEED_B 4
+#define DIST_ANGLE 2
+#define DIST_ANGLE_B 2
+#define LIM_DIST_SPEED 2
+#define LIM_DIST_ANGLE 2
+#define OFFSET_POS 8
+#define TRAFFIC_SIGN_COOLDOWN 10
+#define TURN_SPEED 40
+#define NORMAL_SPEED 60
+#define CAR_POS_RADIUS 5
 
+Point craftPoint(const Point& carPos, const Vec2f& vec);
+Point craftPoint(const Point& carPos, const float& angle);
 int cooldown = 0;
 Mat* CarControl::maskROI;
 Mat CarControl::maskRoiLane;
@@ -15,20 +24,24 @@ float CarControl::preSpeed;
 Vec2f CarControl::vecLeftSpeed, CarControl::vecRightSpeed, CarControl::vecLeftAngle, CarControl::vecRightAngle;
 Point CarControl::LeftAboveSpeedA, CarControl::RightAboveSpeedA, CarControl::LeftBelowSpeedA, CarControl::RightBelowSpeedA;
 Point CarControl::LeftAboveAngleA, CarControl::RightAboveAngleA, CarControl::LeftBelowAngleA, CarControl::RightBelowAngleA;
+bool CarControl::flag_expand;
 TRAFFIC_SIGN turn = NONE;
+vector<Point> list_point_ROI = {Point(0,240), Point(0,150), Point(100, SKYLINE), Point(320-100, SKYLINE), Point(320,150), Point(320,240)};
+vector<Point> list_point_noROI = {Point(0,240), Point(0,SKYLINE), Point(320,SKYLINE), Point(320,240)};
+//vector<Point> list_point_ROI = {Point(0,150), Point(100, SKYLINE), Point(320-100, SKYLINE), Point(320,150)};
+//vector<Point> list_point_noROI = {Point(0,150), Point(0,SKYLINE), Point(320,SKYLINE), Point(320,150)};
 void CarControl::init(){
-    vector<Point> list_point_ROI = {Point(0,240), Point(0,150), Point(100,80), Point(220,80), Point(320,150), Point(320,240)};
-    vector<Point> list_point_noROI = {Point(0,240), Point(0,80), Point(320,80), Point(320,240)};
     maskRoiLane = Mat::zeros(Size(320,240), CV_8UC3);
     maskRoiIntersection = Mat::zeros(Size(320,240), CV_8UC3);
     cv::fillConvexPoly(maskRoiLane, list_point_ROI, Scalar(255,255,255));
     cv::fillConvexPoly(maskRoiIntersection, list_point_noROI, Scalar(255,255,255));
-    maskROI = &maskRoiIntersection;
+    //maskROI = &maskRoiIntersection;
+    setROI(true);
 }
 
 CarControl::CarControl(){
-    carPos.x = 120;
-    carPos.y = 300;
+    carPos.x = CAR_POS_X;
+    carPos.y = CAR_POS_Y;
     steer_publisher = node_obj1.advertise<std_msgs::Float32>("Team1_steerAngle",10);
     speed_publisher = node_obj2.advertise<std_msgs::Float32>("Team1_speed",10);
 }
@@ -41,8 +54,8 @@ float CarControl::errorAngle(const Point &dst){
     double pi = CV_PI;
     double dx = dst.x - carPos.x;
     double dy = carPos.y - dst.y; 
-    if (dx < 0) return -atan(-dx / dy) * 180 / pi;
-    return atan(dx / dy) * 180 / pi;
+    if (dx < 0) return max(-atan(-dx / dy) * 180 / pi, -50.);
+    return min(atan(dx / dy) * 180 / pi, 50.);
 }
 
 float CarControl::errorAngle(const Point &pntAboveSpeed, const Point &pntBelow){
@@ -156,7 +169,8 @@ int null_count = 0;
 void CarControl::driverCar(DetectLane* detect){
     vector<Point> left = detect->getLeftLane();
     vector<Point> right = detect->getRightLane();
-    int i = left.size() - 8;
+    int i = left.size() - OFFSET_POS;
+    //cout << left << " " << detect->getRightLaneSize() << endl;
     float error;// = preError;
     //int origin = 12;
     /*
@@ -224,10 +238,13 @@ void CarControl::driverCar(DetectLane* detect){
                 LeftBelowSpeed = left[k];
                 LeftBelowAngle = left[k];
                 int temp = k;
+                int found_flag1 = 0;
+                int found_flag2 = 0;
                 k = temp - DIST_SPEED;
                 while (k >= max(temp - DIST_SPEED - LIM_DIST_SPEED, 0)){
                     if (left[k] != DetectLane::null) {
                         LeftAboveSpeed = left[k];
+                        found_flag1 = 1;
                         break;
                     }
                     k--;
@@ -236,9 +253,40 @@ void CarControl::driverCar(DetectLane* detect){
                 while (k >= max(temp - DIST_ANGLE - LIM_DIST_ANGLE, 0)){
                     if (left[k] != DetectLane::null) {
                         LeftAboveAngle = left[k];
+                        found_flag2 = 1;
                         break;
                     }
                     k--;
+                }
+                k = temp + DIST_SPEED_B;
+                if (!found_flag1){
+                    //found_flag1 = 0;
+                    //leftAboveSpeed = left[temp];
+                    //leftBelowSpeed = left[k];
+                    while (k < min(temp + DIST_SPEED_B + LIM_DIST_SPEED, (int) left.size())){
+                        if (left[k] != DetectLane::null) {
+                            LeftAboveSpeed = left[temp];
+                            LeftBelowSpeed = left[k];
+                            found_flag1 = 1;
+                            break;
+                        }
+                        k++;
+                    }
+                }
+                k = temp + DIST_ANGLE_B;
+                if (!found_flag2){
+                    //found_flag1 = 0;
+                    //leftAboveSpeed = left[temp];
+                    //LeftBelowAngle = left[k];
+                    while (k < min(temp + DIST_ANGLE_B + LIM_DIST_ANGLE, (int) left.size())){
+                        if (left[k] != DetectLane::null) {
+                            LeftAboveAngle = left[temp];
+                            LeftBelowAngle = left[k];
+                            found_flag2 = 1;
+                            break;
+                        }
+                        k++;
+                    }
                 }
                 /*
                 if (k < max(temp - DIST_SPEED - LIM_DIST_SPEED, 0)){
@@ -264,10 +312,13 @@ void CarControl::driverCar(DetectLane* detect){
                 RightBelowSpeed = right[k];
                 RightBelowAngle = right[k];
                 int temp = k;
+                int found_flag1 = 0;
+                int found_flag2 = 0;
                 k = temp - DIST_SPEED;
                 while (k >= max(temp - DIST_SPEED - LIM_DIST_SPEED, 0)){
                     if (right[k] != DetectLane::null) {
                         RightAboveSpeed = right[k];
+                        found_flag1 = 1;
                         break;
                     }
                     k--;
@@ -276,9 +327,40 @@ void CarControl::driverCar(DetectLane* detect){
                 while (k >= max(temp - DIST_ANGLE - LIM_DIST_ANGLE, 0)){
                     if (right[k] != DetectLane::null) {
                         RightAboveAngle = right[k];
+                        found_flag2 = 1;
                         break;
                     }
                     k--;
+                }
+                k = temp + DIST_SPEED_B;
+                if (!found_flag1){
+                    //found_flag1 = 0;
+                    //leftAboveSpeed = left[temp];
+                    //leftBelowSpeed = left[k];
+                    while (k < min(temp + DIST_SPEED_B + LIM_DIST_SPEED, (int) right.size())){
+                        if (right[k] != DetectLane::null) {
+                            RightAboveSpeed = right[temp];
+                            RightBelowSpeed = right[k];
+                            found_flag1 = 1;
+                            break;
+                        }
+                        k++;
+                    }
+                }
+                k = temp + DIST_ANGLE_B;
+                if (!found_flag2){
+                    //found_flag1 = 0;
+                    //leftAboveSpeed = left[temp];
+                    RightBelowAngle = left[k];
+                    while (k < min(temp + DIST_ANGLE_B + LIM_DIST_ANGLE, (int) right.size())){
+                        if (right[k] != DetectLane::null) {
+                            RightAboveAngle = right[temp];
+                            RightBelowAngle = right[k];
+                            found_flag2 = 1;
+                            break;
+                        }
+                        k++;
+                    }
                 }
                 /*
                 if (k < max(temp - DIST_SPEED - LIM_DIST_SPEED, 0)){
@@ -297,14 +379,22 @@ void CarControl::driverCar(DetectLane* detect){
             }
             k++;
         }
-        if (LeftAboveSpeed != DetectLane::null) LeftAboveSpeedA = LeftAboveSpeed;
-        if (LeftBelowSpeed != DetectLane::null) LeftBelowSpeedA = LeftBelowSpeed;
-        if (LeftAboveAngle != DetectLane::null) LeftAboveAngleA = LeftAboveAngle;
-        if (LeftBelowAngle != DetectLane::null) LeftBelowAngleA = LeftBelowAngle;
-        if (RightAboveSpeed != DetectLane::null) RightAboveSpeedA = RightAboveSpeed;
-        if (RightBelowSpeed != DetectLane::null) RightBelowSpeedA = RightBelowSpeed;
-        if (RightAboveAngle != DetectLane::null) RightAboveAngleA = RightAboveAngle;
-        if (RightBelowAngle != DetectLane::null) RightBelowAngleA = RightBelowAngle;
+        if (LeftAboveSpeed != DetectLane::null && LeftBelowSpeed != DetectLane::null){
+            LeftBelowSpeedA = LeftBelowSpeed;
+            LeftAboveSpeedA = LeftAboveSpeed;
+        }
+        if (LeftAboveAngle != DetectLane::null && LeftBelowAngle != DetectLane::null){
+            LeftAboveAngleA = LeftAboveAngle;
+            LeftBelowAngleA = LeftBelowAngle;
+        }
+        if (RightAboveSpeed != DetectLane::null && RightBelowSpeed != DetectLane::null){
+            RightAboveSpeedA = RightAboveSpeed;
+            RightBelowSpeedA = RightBelowSpeed;
+        }
+        if (RightAboveAngle != DetectLane::null && RightBelowAngle != DetectLane::null){
+            RightAboveAngleA = RightAboveAngle;
+            RightBelowAngleA = RightBelowAngle;
+        }
             /*
             else{
                 speed.data = 60;
@@ -361,42 +451,57 @@ void CarControl::driverCar(DetectLane* detect){
     vecRightAngle = Vec2f(RightAboveAngleA.x - RightBelowAngleA.x, RightAboveAngleA.y - RightBelowAngleA.y);
     vecRightAngle = vecRightAngle / cv::norm(vecRightAngle);
     if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 || 
-        vecLeftAngle.dot(vecRightAngle) < 0.98 ||
-        vecLeftAngle.dot(vecLeftSpeed) < 0.98 ||
-        vecRightAngle.dot(vecRightSpeed) < 0.98){
+        vecLeftAngle.dot(vecRightAngle) < 0.99 ||
+        vecLeftAngle.dot(vecLeftSpeed) < 0.99 ||
+        vecRightAngle.dot(vecRightSpeed) < 0.99 ||
+        (detect->getLeftLaneRaw().size() <= 9 && detect->getRightLaneRaw().size() <= 9)){
         cout << vecLeftSpeed.dot(vecRightSpeed) << " " << vecLeftAngle.dot(vecRightAngle) << endl;
         cout << "Sap toi nga re" << null_count++ << endl;
-        CarControl::preSpeed = 40;
+        CarControl::preSpeed = TURN_SPEED;
         TRAFFIC_SIGN temp;
         temp = DetectSign::get_traffic_sign(true);
         if (temp == ERROR) {
             cout << "Check haar path" << endl;
             return;
         }
-        if (temp != NONE) {
+        else if (temp != NONE) {
             turn = temp;
-            cooldown = 5;
+            cooldown = TRAFFIC_SIGN_COOLDOWN;
         }
-        else if (cooldown > 0 && turn != NONE) cooldown = 5;
+        if (cooldown > 0 && turn != NONE) cooldown = TRAFFIC_SIGN_COOLDOWN;
         //else if (!cooldown) turn = NONE;
         if (turn == NONE) {
             cout << "Di thang" << endl;
-            CarControl::preSteer = (LeftBelowSpeedA + RightBelowSpeedA) / 2;
+            CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
         }
         else if(turn == TURN_LEFT)  {
             cout << "Re trai" << endl;
-            CarControl::preSteer = LeftBelowAngleA + Point(laneWidth / 2, 0);
+            if (vecLeftAngle[0] < vecRightAngle[0]) CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
+            else CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+            //LeftBelowAngleA + Point(laneWidth / 2, 0);
+            //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 - 20, 300 - 10);
+            //cout << preSteer << endl;
+            //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
         }
         else  {
             cout << "Re phai" << endl;
-            CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
+            // Post 50 when center angle too clese
+            //cout << preSteer << endl;
+            //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
+            if (vecLeftAngle[0] < vecRightAngle[0]) CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+            else CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
+            //cout << vecLeftAngle << vecRightAngle << errorAngle(preSteer) << endl;
+            //CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
+            //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 + 20, 300 - 10);
         }
-        CarControl::maskROI = &maskRoiIntersection;
+        //CarControl::maskROI = &maskRoiIntersection;
+        setROI(true);
     }
     else {
-        CarControl::preSteer = (LeftBelowSpeedA + RightBelowSpeedA) / 2;
-        CarControl::preSpeed = 60;
-        CarControl::maskROI = &maskRoiLane;
+        CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+        CarControl::preSpeed = NORMAL_SPEED;
+        //CarControl::maskROI = &maskRoiLane;
+        setROI(false);
         //turn = NONE;
         if (cooldown > 0) cooldown--;
         else if (!cooldown) turn = NONE;
@@ -417,6 +522,7 @@ void CarControl::driverCar(DetectLane* detect){
     cv::line(test, LeftAboveAngleA, LeftBelowAngleA, Scalar(0,255,255), 2);
     cv::imshow("Test", test);
     error = errorAngle(CarControl::preSteer);
+    if (abs(error) > 50) error = (error > 0) * 50;
     angle.data = error;
     speed.data = CarControl::preSpeed;
     //cout << angle.data << endl;
@@ -428,4 +534,20 @@ void CarControl::driverCar(DetectLane* detect){
     steer_publisher.publish(angle);
     speed_publisher.publish(speed);
     return;
+}
+Point craftPoint(const Point& carPos, const float& angle){
+    //x0 - carPos.x / carPos.y -y0 =tan(angle);
+    float dy = 20;
+    float dx = tan(angle) * dy;
+    int x = carPos.x + dx;
+    int y = carPos.y - dy;
+    return Point(x, y);
+}
+Point craftPoint(const Point& carPos, const Vec2f& vec){
+    //x0 - carPos.x / carPos.y -y0 =tan(angle);
+    float dy = 20;
+    float dx = vec[0] / -vec[1] * dy;
+    int x = carPos.x + dx;
+    int y = carPos.y - dy;
+    return Point(x, y);
 }

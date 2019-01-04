@@ -54,6 +54,20 @@ math.h
 algorithm
 -
 
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/polyfit.h
+opencv2/highgui/highgui.hpp
+-
+opencv2/imgproc/imgproc.hpp
+-
+opencv2/opencv.hpp
+-
+vector
+-
+math.h
+-
+algorithm
+-
+
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/carcontrol.cpp
 detectlane.h
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/detectlane.h
@@ -71,6 +85,12 @@ carcontrol.h
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/carcontrol.h
 detectlane.h
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/detectlane.h
+
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp
+opencv2/highgui/highgui.hpp
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/opencv2/highgui/highgui.hpp
+polyfit.h
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.h
 
 /opt/ros/melodic/include/ros/advertise_options.h
 ros/forwards.h

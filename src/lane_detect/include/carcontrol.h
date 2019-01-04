@@ -1,5 +1,7 @@
 #ifndef CARCONTROL_H
 #define CARCONTROL_H
+#define CAR_POS_X 120
+#define CAR_POS_Y 300
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
@@ -14,7 +16,8 @@ using namespace std;
 using namespace cv;
 
 class DetectLane;
-
+extern vector<Point> list_point_ROI;
+extern vector<Point> list_point_noROI;
 class CarControl 
 {
 public:
@@ -26,6 +29,19 @@ public:
     static void init();
     static Mat& getROI(){
         return *maskROI;
+    }
+    static void setROI(bool expand){
+        flag_expand = expand;
+        if (flag_expand) maskROI = &maskRoiLane;
+        else maskROI = &maskRoiIntersection;
+    }
+    static vector<Point>& get_list_point_ROI(){
+    //flag_expand = expand;
+        if (flag_expand) return list_point_noROI;
+        else return list_point_ROI;
+    }
+    Point get_car_pos(){
+        return carPos;
     }
 private:
     float errorAngle(const Point &dst);
@@ -61,6 +77,7 @@ private:
     static Point preSteer;
     static float preSpeed;
     static Vec2f vecLeftSpeed, vecRightSpeed, vecLeftAngle, vecRightAngle;
+    static bool flag_expand;
 };
 //init();
 #endif

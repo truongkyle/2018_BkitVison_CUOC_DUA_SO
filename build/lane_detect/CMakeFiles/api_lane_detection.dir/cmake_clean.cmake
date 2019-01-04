@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o"
   "CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o"
   "CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o"
+  "CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.pdb"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libapi_lane_detection.so"
 )

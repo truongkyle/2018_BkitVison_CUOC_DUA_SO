@@ -4,6 +4,7 @@
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/carcontrol.h
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/detect_traffic_sign.h
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/detectlane.h
+lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/polyfit.h
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/main.cpp
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
 lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o: /opt/ros/melodic/include/image_transport/camera_publisher.h

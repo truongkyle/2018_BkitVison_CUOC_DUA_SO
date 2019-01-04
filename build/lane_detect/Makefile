@@ -305,6 +305,33 @@ src/main.cpp.s:
 	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/polyfit.o: src/polyfit.cpp.o
+
+.PHONY : src/polyfit.o
+
+# target to build an object file
+src/polyfit.cpp.o:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o
+.PHONY : src/polyfit.cpp.o
+
+src/polyfit.i: src/polyfit.cpp.i
+
+.PHONY : src/polyfit.i
+
+# target to preprocess a source file
+src/polyfit.cpp.i:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.i
+.PHONY : src/polyfit.cpp.i
+
+src/polyfit.s: src/polyfit.cpp.s
+
+.PHONY : src/polyfit.s
+
+# target to generate assembly for a file
+src/polyfit.cpp.s:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.s
+.PHONY : src/polyfit.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -332,6 +359,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/polyfit.o"
+	@echo "... src/polyfit.i"
+	@echo "... src/polyfit.s"
 .PHONY : help
 
 

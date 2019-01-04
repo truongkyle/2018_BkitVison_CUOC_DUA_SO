@@ -190,3 +190,6 @@ lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o: /opt/ros/mel
 lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h
 lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h
 
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include/polyfit.h
+lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/src/polyfit.cpp
+
