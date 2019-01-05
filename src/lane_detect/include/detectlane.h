@@ -12,6 +12,8 @@
 
 using namespace std;
 using namespace cv;
+Scalar ConvertArraytoScalar(int arr[3]);
+float angleVector(const Vec2f& vec1, const Vec2f& vec2);
 float angleLine(const Vec4f& line1, const Vec4f& line2);
 Vec4f createLine(const Point& pnt1, const Point& pnt2);
 float dist_point_point(const Point& pnt1, const Point& pnt2);
@@ -72,6 +74,7 @@ public:
     
 private:
     Mat preProcess(const Mat &src);
+    Mat preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane);
 
     Mat morphological(const Mat &imgHSV);
     Mat birdViewTranform(const Mat &source);
@@ -87,15 +90,16 @@ private:
     int maxThreshold[3] = {179, 30, 255};*/
     //int minThreshold[3] = {101, 68, 0};
     //int maxThreshold[3] = {126, 196, 255};
-    int minThreshold[3] = {55, 155, 0};
+    
+    int minLaneShadowTh[3] = {55, 155, 0};
+    int maxLaneShadowTh[3] = {179, 255, 184};
+    int minLaneNormalTh[3] = {55, 155, 0};
     //int minThreshold[3] = {55, 93, 0};
-    int maxThreshold[3] = {179, 255, 184};
-    int minShadowTh[3] = {90, 43, 36};
-    int maxShadowTh[3] = {120, 81, 171};
-    int minRoadThreshold[3] = {55, 155, 0};
-    int maxRoadThreshold[3] = {179, 255, 184};
-    int minLaneInShadow[3] = {90, 43, 97};
-    int maxLaneInShadow[3] = {120, 80, 171};
+    int maxLaneNormalTh[3] = {179, 255, 184};
+    int minRoadShadowTh[3] = {90, 43, 36};
+    int maxRoadShadowTh[3] = {120, 81, 171};
+    int minRoadNormalTh[3] = {55, 155, 0};
+    int maxRoadNormalTh[3] = {179, 255, 184};
     int binaryThreshold = 180;
 
     int shadowParam = 40;

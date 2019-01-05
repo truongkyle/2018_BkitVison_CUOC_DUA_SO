@@ -10,6 +10,8 @@ int maxx(int a, int b)
 {
     return a > b ? a : b;
 }
+Scalar ConvertArraytoScalar(int arr[3]);
+float angleVector(const Vec2f& vec1, const Vec2f& vec2);
 float angleLine(const Vec4f& line1, const Vec4f& line2);
 Vec4f createLine(const Point& pnt1, const Point& pnt2);
 float dist_point_point(const Point& pnt1, const Point& pnt2);
@@ -42,16 +44,43 @@ Point2f dst_vertices[4] = {
 Point DetectLane::null = Point();
 
 DetectLane::DetectLane() {
-    cvCreateTrackbar("LowHroad", "Threshold", &minThreshold[0], 179);
-    cvCreateTrackbar("HighHroad", "Threshold", &maxThreshold[0], 179);
+    cvCreateTrackbar("Low-H-roadNormal", "ThresholdRoad", &minRoadNormalTh[0], 179);
+    cvCreateTrackbar("High-H-roadNormal", "ThresholdRoad", &maxRoadNormalTh[0], 179);
 
-    cvCreateTrackbar("LowLroad", "Threshold", &minThreshold[1], 255);
-    cvCreateTrackbar("HighLroad", "Threshold", &maxThreshold[1], 255);
+    cvCreateTrackbar("Low-L-roadNormal", "ThresholdRoad", &minRoadNormalTh[1], 255);
+    cvCreateTrackbar("High-L-roadNormal", "ThresholdRoad", &maxRoadNormalTh[1], 255);
 
-    cvCreateTrackbar("LowSroad", "Threshold", &minThreshold[2], 255);
-    cvCreateTrackbar("HighSroad", "Threshold", &maxThreshold[2], 255);
+    cvCreateTrackbar("Low-S-roadNormal", "ThresholdRoad", &minRoadNormalTh[2], 255);
+    cvCreateTrackbar("High-S-roadNormal", "ThresholdRoad", &maxRoadNormalTh[2], 255);
 
-    cvCreateTrackbar("Shadow Param", "Threshold", &shadowParam, 255);
+    cvCreateTrackbar("Low-H-roadShadow", "ThresholdRoad", &minRoadShadowTh[0], 179);
+    cvCreateTrackbar("High-H-roadShadow", "ThresholdRoad", &maxRoadShadowTh[0], 179);
+
+    cvCreateTrackbar("Low-L-roadShadow", "ThresholdRoad", &minRoadShadowTh[1], 255);
+    cvCreateTrackbar("High-L-roadShadow", "ThresholdRoad", &maxRoadShadowTh[1], 255);
+
+    cvCreateTrackbar("Low-S-roadShadow", "ThresholdRoad", &minRoadShadowTh[2], 255);
+    cvCreateTrackbar("High-S-roadShadow", "ThresholdRoad", &maxRoadShadowTh[2], 255);
+
+    //cvCreateTrackbar("Shadow Param", "Threshold", &shadowParam, 255);
+
+    cvCreateTrackbar("Low-H-laneNormal", "ThresholdLane", &minLaneNormalTh[0], 179);
+    cvCreateTrackbar("High-H-laneNormal", "ThresholdLane", &maxLaneNormalTh[0], 179);
+
+    cvCreateTrackbar("Low-L-laneNormal", "ThresholdLane", &minLaneNormalTh[1], 255);
+    cvCreateTrackbar("High-L-laneNormal", "ThresholdLane", &maxLaneNormalTh[1], 255);
+
+    cvCreateTrackbar("Low-S-laneNormal", "ThresholdLane", &minLaneNormalTh[2], 255);
+    cvCreateTrackbar("High-S-laneNormal", "ThresholdLane", &maxLaneNormalTh[2], 255);
+
+    cvCreateTrackbar("Low-H-laneShadow", "ThresholdLane", &minLaneShadowTh[0], 179);
+    cvCreateTrackbar("High-H-laneShadow", "ThresholdLane", &maxLaneShadowTh[0], 179);
+
+    cvCreateTrackbar("Low-L-laneShadow", "ThresholdLane", &minLaneShadowTh[1], 255);
+    cvCreateTrackbar("High-L-laneShadow", "ThresholdLane", &maxLaneShadowTh[1], 255);
+
+    cvCreateTrackbar("Low-S-laneShadow", "ThresholdLane", &minLaneShadowTh[2], 255);
+    cvCreateTrackbar("High-S-laneShadow", "ThresholdLane", &maxLaneShadowTh[2], 255);
 }
 
 DetectLane::~DetectLane(){}
@@ -176,8 +205,7 @@ void DetectLane::update(const Mat &src)
     cv::imshow("Lane Detect", lane);
 }
 
-Mat DetectLane::preProcess(const Mat &src)
-{
+Mat DetectLane::preProcess(const Mat &src){
     /*
     Mat imgThresholded, imgHLS, dst;
 
@@ -273,7 +301,7 @@ Mat DetectLane::preProcess(const Mat &src)
     return dst;
     */
 
-   
+    /*
     Mat imgThresholded, imgHLS, dst, blur_img;
 
     blur_img = src & CarControl::getROI();
@@ -299,9 +327,226 @@ Mat DetectLane::preProcess(const Mat &src)
     imshow("Threshold", imgThresholded);
 
     return dst;
+    */
+    
+    Mat imgThresholded, imgHSV, dst;
+
+    cvtColor(src, imgHSV, COLOR_BGR2HSV);
+    
+    cv::GaussianBlur(imgHSV, imgHSV, Size(17,17), 0.);
+//cout << "test";
+
+    //cout << maskROI3d.size();
+    //cout << blur_img.size();
+    //Mat maskROI;
+    cv::bitwise_and(CarControl::getROI(), imgHSV, imgHSV);
+//cout << "test";
+    Mat mask1;
+    cv::inRange(imgHSV, Scalar(41,5,53), Scalar(93,31,102), mask1);
+    //Mat mask2;
+    //cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
+    Mat maskShadow;
+    cv::inRange(imgHSV, Scalar(70,28,12), Scalar(137,145,74), maskShadow);
+    Mat maskCombined;
+    maskCombined = mask1 | maskShadow;
+
+    vector<vector<Point>> contours;
+    cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    //cout << "test";
+    vector<Point> max_contour;
+    double max_area = 0;
+    for (int i = 0; i < contours.size(); i++){
+        double cnt_area = cv::contourArea(contours[i]);
+        if (cnt_area > max_area){
+            max_area = cnt_area;
+            max_contour = contours[i];
+        }
+    }
+    vector<vector<Point>> max_contour_dummy;
+    max_contour_dummy.push_back(max_contour);
+    maskCombined = Mat::zeros(Size(320,240), CV_8U);
+    cv::drawContours(maskCombined, max_contour_dummy, -1, 255, 2);  
+    //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
+    imshow("Binary", maskCombined);
+    // for (int i = 0; i < points2.size(); i++)
+    dst = birdViewTranform(maskCombined);
+    fillLane(dst);
+    imshow("Bird View", dst);
+    return dst;
     
 }
+/*
+Mat DetectLane::preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane){
+    /*
+    Mat imgThresholded, imgHLS, dst;
 
+    cvtColor(src, imgHLS, COLOR_BGR2HLS);
+    
+    cv::GaussianBlur(imgHLS, imgHLS, Size(17,17), 0.);
+//cout << "test";
+
+    //cout << maskROI3d.size();
+    //cout << blur_img.size();
+    //Mat maskROI;
+    cv::bitwise_and(CarControl::getROI(), imgHLS, imgHLS);
+//cout << "test";
+    Mat mask1;
+    cv::inRange(imgHLS, Scalar(minThreshold[0], minThreshold[1], minThreshold[2]), 
+                Scalar(maxThreshold[0], maxThreshold[1], maxThreshold[2]), mask1);
+    //Mat mask2;
+    //cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
+    //Mat maskShadow;
+    //cv::inRange(imgHSV, Scalar(70,28,12), Scalar(137,145,74), maskShadow);
+    //mask side lane
+
+    //Mat maskCombined = mask1 | mask2 | maskShadow;
+    Mat& maskCombined = mask1;
+    cv::imshow("Threshold", maskCombined);
+    vector<vector<Point>> contours;
+    cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    //cout << "test";
+    vector<Point> max_contour;
+    double max_area = 0;
+    for (const vector<Point>& contour : contours){
+        double cnt_area = cv::contourArea(contour);
+        if (cnt_area > max_area){
+            max_area = cnt_area;
+            max_contour = contour;
+        }
+    }
+    //vector<vector<Point>> max_contour_dummy;
+    //max_contour_dummy.push_back(max_contour);
+    maskCombined = Mat::zeros(Size(320,240), CV_8U);
+    cv::drawContours(maskCombined, vector<vector<Point>>{max_contour}, -1, 255, 2);  
+    //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
+    cv::imshow("Binary", maskCombined);
+    
+    // for (int i = 0; i < points2.size(); i++)
+    dst = birdViewTranform(maskCombined);
+    fillLane(dst);
+    cv::imshow("Bird View", dst);
+    return dst;
+    */
+
+   /*
+    Mat imgThresholded, imgHLS, dst;
+
+    cvtColor(src, imgHLS, COLOR_BGR2HLS);
+    
+    cv::GaussianBlur(imgHLS, imgHLS, Size(17,17), 0.);
+//cout << "test";
+
+    //cout << maskROI3d.size();
+    //cout << blur_img.size();
+    //Mat maskROI;
+    cv::bitwise_and(CarControl::getROI(), imgHLS, imgHLS);
+//cout << "test";
+    Mat mask1;
+    cv::inRange(imgHLS, Scalar(102,43,10), Scalar(123,212,105), mask1);
+    //mask side lane
+
+    Mat maskCombined = mask1;
+
+    vector<vector<Point>> contours;
+    cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    //cout << "test";
+    vector<Point> max_contour;
+    double max_area = 0;
+    for (vector<Point> contour : contours){
+        double cnt_area = cv::contourArea(contour);
+        if (cnt_area > max_area){
+            max_area = cnt_area;
+            max_contour = contour;
+        }
+    }
+    vector<vector<Point>> max_contour_dummy;
+    max_contour_dummy.push_back(max_contour);
+    maskCombined = Mat::zeros(Size(320,240), CV_8U);
+    cv::drawContours(maskCombined, max_contour_dummy, -1, 255, 2);  
+    //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
+    cv::imshow("Binary", maskCombined);
+    // for (int i = 0; i < points2.size(); i++)
+    dst = birdViewTranform(maskCombined);
+    fillLane(dst);
+    cv::imshow("Bird View", dst);
+    return dst;
+    */
+
+    /*
+    Mat imgThresholded, imgHLS, dst, blur_img;
+
+    blur_img = src & CarControl::getROI();
+    
+    cv::GaussianBlur(blur_img, blur_img, Size(7,7), 0.);
+    
+    cvtColor(blur_img, imgHLS, COLOR_BGR2HLS);
+    
+    inRange(imgHLS, Scalar(minThreshold[0], minThreshold[1], minThreshold[2]), 
+        Scalar(maxThreshold[0], maxThreshold[1], maxThreshold[2]), 
+        imgThresholded);
+
+    // Or with shadhow threshold
+
+    dst = birdViewTranform(imgThresholded);
+
+    fillLane(dst);
+
+    dst = morphological(dst);
+
+    imshow("Bird View", dst);
+
+    imshow("Threshold", imgThresholded);
+
+    return dst;
+    */
+    /*
+    Mat imgThresholded, imgHLS, dst;
+
+    cvtColor(src, imgHLS, COLOR_BGR2HLS);
+    
+    //cv::GaussianBlur(imgHLS, imgHLS, Size(17,17), 0.);
+//cout << "test";
+
+    //cout << maskROI3d.size();
+    //cout << blur_img.size();
+    //Mat maskROI;
+    imgHLS = imgHLS & CarControl::getROI();
+//cout << "test";
+    Mat maskRoadNormal;
+    cv::inRange(imgHLS, ConvertArraytoScalar(minRoadNormalTh), ConvertArraytoScalar(maxRoadNormalTh), maskRoadNormal);
+    //Mat mask2;
+    //cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
+    Mat maskRoadShadow;
+    cv::inRange(imgHLS, ConvertArraytoScalar(minRoadShadowTh), ConvertArraytoScalar(maxRoadShadowTh), maskRoadShadow);
+    
+    Mat maskRoadCombined = maskRoadNormal | maskRoadShadow;
+
+    vector<vector<Point>> contours;
+    cv::findContours(maskRoadCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    //cout << "test";
+    vector<Point> max_contour;
+    double max_area = 0;
+    for (const vector<Point>& contour : contours){//int i = 0; i < contours.size(); i++){
+        //double cnt_area = cv::contourArea(contours[i]);
+        double cnt_area = cv::contourArea(contour);
+        if (cnt_area > max_area){
+            max_area = cnt_area;
+            max_contour = contour;
+        }
+    }
+    vector<vector<Point>> max_contour_dummy;
+    max_contour_dummy.push_back(max_contour);
+    maskCombined = Mat::zeros(Size(320,240), CV_8U);
+    cv::drawContours(maskCombined, max_contour_dummy, -1, 255, 2);  
+    //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
+    imshow("Binary", maskCombined);
+    // for (int i = 0; i < points2.size(); i++)
+    dst = birdViewTranform(maskCombined);
+    fillLane(dst);
+    imshow("Bird View", dst);
+    //return dst; 
+}
+*/
 Mat DetectLane::laneInShadow(const Mat &imgHLS)
 {
     Mat shadowMask, shadow, shadowHLS, laneShadow;
@@ -314,9 +559,9 @@ Mat DetectLane::laneInShadow(const Mat &imgHLS)
 
     cvtColor(shadow, shadowHSV, COLOR_BGR2HSV);
 */
-    inRange(imgHLS, Scalar(minLaneInShadow[0], minLaneInShadow[1], minLaneInShadow[2]), 
-        Scalar(maxLaneInShadow[0], maxLaneInShadow[1], maxLaneInShadow[2]), 
-        laneShadow);
+    //inRange(imgHLS, Scalar(minLaneInShadow[0], minLaneInShadow[1], minLaneInShadow[2]), 
+    //    Scalar(maxLaneInShadow[0], maxLaneInShadow[1], maxLaneInShadow[2]), 
+    //    laneShadow);
 
     return laneShadow;
 }
@@ -768,6 +1013,18 @@ Mat DetectLane::birdViewTranform(const Mat &src)
     return dst;
     */
 }
+float angleVector(const Vec2f& vec1, const Vec2f& vec2){
+    float vx1 = vec1[0],
+          vy1 = vec1[1];
+    float vx2 = vec2[0],
+          vy2 = vec2[1];
+    // Normalize line1 vector and line2 vector
+    if (vy1 * vy2 < 0){
+        vx2 = -vx2;
+        vy2 = -vy2;
+    }
+    return acos((vx1 * vx2 + vy1 * vy2) / (sqrt(pow(vx1,2) + pow(vy1,2)) * sqrt(pow(vx2,2) + pow(vy2,2)))) / CV_PI * 180;
+}
 float angleLine(const Vec4f& line1, const Vec4f& line2){
     float vx1 = line1[0],
           vy1 = line1[1];
@@ -845,4 +1102,8 @@ float calc_Y(const int& x, const Vec4f& line){
           x0 = line[2],
           y0 = line[3];
     return vy*(x-x0)/vx + y0;
+}
+
+Scalar ConvertArraytoScalar(int arr[3]){
+    return Scalar(arr[0], arr[1], arr[2]);
 }

@@ -12,14 +12,14 @@
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 #define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_735.jpg"
 #define VIDEO_OR_IMAGE "video" // Or "image"
-#define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/left_sign_v2.xml"
-#define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/right_sign_v2.xml"
+#define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_left_2.xml"
+#define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_right_2.xml"
 #define STREAM true
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 VideoCapture capture(VIDEO_PATH);
-//VideoWrir video("/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi",CV_FOURCC('M','J','P','G'),25, Size(320,240));
+//VideoWriter video("/home/hoquangnam/Documents/CuocDuaSo/outcpp2.avi",CV_FOURCC('M','J','P','G'),25, Size(320,240));
 DetectLane *detect;
 CarControl *car;
 int skipFrame = 1;
@@ -95,7 +95,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "image_listener");
     cv::namedWindow("View");
     cv::namedWindow("Binary");
-    cv::namedWindow("Threshold");
+    cv::namedWindow("ThresholdRoad");
+    cv::namedWindow("ThresholdLane");
     cv::namedWindow("Bird View");
     //cv::namedWindow("Bird View Filled");
     //cv::namedWindow("Bird View fix shadow");
