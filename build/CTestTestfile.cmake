@@ -7,5 +7,5 @@
 subdirs("gtest")
 subdirs("file_server")
 subdirs("mastering_ros_demo_pkg")
-subdirs("lane_detect")
+subdirs("team207")
 subdirs("video_stream")

@@ -448,13 +448,13 @@ sensor_msgs_DIR:PATH=/opt/ros/melodic/share/sensor_msgs/cmake
 std_msgs_DIR:PATH=/opt/ros/melodic/share/std_msgs/cmake
 
 //Value Computed by CMake
-team207_BINARY_DIR:STATIC=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect
+team207_BINARY_DIR:STATIC=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207
 
 //Dependencies for target
 team207_LIB_DEPENDS:STATIC=
 
 //Value Computed by CMake
-team207_SOURCE_DIR:STATIC=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect
+team207_SOURCE_DIR:STATIC=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207
 
 //Value Computed by CMake
 video_stream_BINARY_DIR:STATIC=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/video_stream

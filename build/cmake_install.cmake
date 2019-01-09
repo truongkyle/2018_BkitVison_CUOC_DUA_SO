@@ -124,7 +124,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/gtest/cmake_install.cmake")
   include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/file_server/cmake_install.cmake")
   include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/mastering_ros_demo_pkg/cmake_install.cmake")
-  include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/cmake_install.cmake")
+  include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/cmake_install.cmake")
   include("/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/video_stream/cmake_install.cmake")
 
 endif()
