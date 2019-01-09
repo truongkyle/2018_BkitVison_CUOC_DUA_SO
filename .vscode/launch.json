@@ -7,9 +7,9 @@
         {
             "type": "ros",
             "command": "rosrun",
-            "name": "lane_detect_run",
-            "package": "lane_detect",
-            "target": "lane_detect",
+            "name": "team207 attach",
+            "package": "team207",
+            "target": "team207",
             "debugSettings": "debugSettings"
         },
         { 
@@ -30,16 +30,16 @@
         {
             "type": "ros",
             "command": "roslaunch",
-            "name": "lane_detect",
-            "package": "lane_detect",
-            "target": "lane_detect.launch",
+            "name": "team207 launch",
+            "package": "team207",
+            "target": "team207.launch",
             "debugSettings": "debugSettings"
         },
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/devel/lib/lane_detect/lane_detect",
+            "program": "${workspaceFolder}/devel/lib/team207/team207_node",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

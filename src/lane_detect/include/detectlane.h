@@ -54,6 +54,9 @@ public:
     
     vector<Point> getLeftLane();
     vector<Point> getRightLane();
+    vector<Point> getMiddleLane(){
+        return middleLane;
+    }
 
     vector<Point> getLeftLaneRaw(){
         return leftLaneRaw;
@@ -63,6 +66,9 @@ public:
     }
     vector<Point> getMiddleLaneRaw(){
         return middleLaneRaw;
+    }
+    bool there_is_middle_lane(){
+        return middleLaneRaw.size();
     }
     SIDE getMiddleLaneSide(){
         return middleLaneSide;

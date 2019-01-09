@@ -488,13 +488,15 @@ void CarControl::driverCar(DetectLane* detect){
         //else if (!cooldown) turn = NONE;
         if (turn == NONE) {
             cout << "Di thang" << endl;
-            vector<Point> middle = detect->getMiddleLaneRaw();
-            if (middle.size()) {
+            
+            if (detect->there_is_middle_lane()) {
+                vector<Point> middle = detect->getMiddleLane();
                 //    //Point middleLanePnt;
                 if (i >= 0) {
                     int k = i;        
                     while (k < middle.size()){
                         if (middle[k] != DetectLane::null) {
+                            //cout << "hi*********************************************************" << endl;
                             CarControl::preSteer = middle[k] ;
                             break;
                         }
@@ -560,14 +562,15 @@ void CarControl::driverCar(DetectLane* detect){
         setROI(true);
     }
     else {
-        vector<Point> middle = detect->getMiddleLaneRaw();
-        if (middle.size()) {
+        if (detect->there_is_middle_lane()) {
+            vector<Point> middle = detect->getMiddleLane();
             //    //Point middleLanePnt;
             if (i >= 0) {
                 int k = i;        
                 while (k < middle.size()){
                     if (middle[k] != DetectLane::null) {
-                        CarControl::preSteer = middle[k] ;
+                        CarControl::preSteer = middle[k];
+                        //cout << "hi*********************************************************" << endl;
                         break;
                     }
                     k++;
@@ -594,7 +597,7 @@ void CarControl::driverCar(DetectLane* detect){
         */
     }
     //cout << turn << endl;
-    cout << CarControl::preSteer << endl;
+    //cout << CarControl::preSteer << endl;
     Mat test = Mat::zeros(Size(240,320), CV_8UC3);
     cv::line(test, RightAboveSpeedA, RightBelowSpeedA, Scalar(255,0,0), 2);
     cv::line(test, LeftAboveSpeedA, LeftBelowSpeedA, Scalar(0,255,0), 2);

@@ -99,6 +99,7 @@ vector<Point> DetectLane::getRightLane(){
 int countFrame = 0;
 void DetectLane::update(const Mat &src){
     cout << countFrame++ << endl;
+    //cout << "hihi" << endl;
     //Mat edges;
     //Canny(src, edges, 100, 200);
     //cv::imshow("Canny", edges);
@@ -325,7 +326,7 @@ Mat DetectLane::preProcess(const Mat &src){
 
     dst = birdViewTranform(imgThresholded);
 
-    fillLane(dst);
+    fillLane(dst); oh. e chưa đổi tên source path trong cmakelist
 
     dst = morphological(dst);
 
@@ -1187,10 +1188,10 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
     */
     //cout << lane1.size() << endl;
     
-    if (countFrame == 1036){
+    if (countFrame == 1027){
         cout << "HERE" << countFrame << endl;
     }
-    Vec4f line1, line2;
+    Vec4f line1, line2; //dist_point_point()
     int lane_flag = 0;
     if (lane1.size() > 1) {
         vector<Point> subLane1(lane1.end() - min(5, lane1.size()), lane1.end());
@@ -1632,17 +1633,33 @@ Scalar ConvertArraytoScalar(int arr[3]){
     return Scalar(arr[0], arr[1], arr[2]);
 }
 bool check_segment_list(vector<vector<Point>>& segment_list){
-    if (segment_list.size() < 3 || segment_list[0].size() >= UPPER_MAX_SEGMENT_SIZE) return false;
     int list_size = segment_list.size();
-
+    //for (int i = list_size - 1; i >= 0; i--){
+    //    cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+    //}
+    //cout<<endl;
+    //cout << "hehe" << endl;
+    if (segment_list.size() < 3 || segment_list[0].size() >= UPPER_MAX_SEGMENT_SIZE) return false;
+    int max_segment_size = 0;
     for (int i = list_size - 1; i >= 0; i--){
         if (segment_list[i].size() <= LOWER_MAX_SEGMENT_SIZE){
-            //cout << i << " " << segment_list2[i].size() << " " << segment_list2[i + 1].size() << endl;
-            if (i > 0 && segment_list[i].size() > segment_list[i - 1].size()){
+            if (segment_list[i].size() > max_segment_size) max_segment_size = segment_list[i].size();
+            if (i > 1 && (int) (segment_list[i].size() - segment_list[i - 1].size()) > 3){
+                //cout << "wha" << endl;
+                //for (int i = list_size - 1; i >= 0; i--){
+                //     cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+                //}
                 return false;
             }
         }
         else return false;
     }
+    int total_pnt = 0;
+    //for (int i = list_size - 1; i >= 0; i--){
+    //    total_pnt += segment_list[i].size();
+    //    cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+    //}
+    //cout << total_pnt << "*" << endl;
+    if (max_segment_size < 3) return false;
     return true;
 }
