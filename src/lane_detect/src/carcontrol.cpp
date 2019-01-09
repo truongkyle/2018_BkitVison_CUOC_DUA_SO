@@ -9,7 +9,7 @@
 #define LIM_DIST_ANGLE 2
 #define OFFSET_POS 8
 #define TRAFFIC_SIGN_COOLDOWN 10
-#define TURN_SPEED 50
+#define TURN_SPEED 40
 #define NORMAL_SPEED 60
 #define CAR_POS_RADIUS 10
 
@@ -19,6 +19,9 @@ int cooldown = 0;
 Mat* CarControl::maskROI;
 Mat CarControl::maskRoiLane;
 Mat CarControl::maskRoiIntersection;
+Mat* CarControl::maskROI1D;
+Mat CarControl::maskRoiLane1D;
+Mat CarControl::maskRoiIntersection1D;
 Point CarControl::preSteer;
 float CarControl::preSpeed;
 Vec2f CarControl::vecLeftSpeed, CarControl::vecRightSpeed, CarControl::vecLeftAngle, CarControl::vecRightAngle;
@@ -33,8 +36,12 @@ vector<Point> list_point_noROI = {Point(0,240), Point(0,SKYLINE), Point(320,SKYL
 void CarControl::init(){
     maskRoiLane = Mat::zeros(Size(320,240), CV_8UC3);
     maskRoiIntersection = Mat::zeros(Size(320,240), CV_8UC3);
+    maskRoiLane1D = Mat::zeros(Size(320,240), CV_8U);
+    maskRoiIntersection1D = Mat::zeros(Size(320,240), CV_8U);
     cv::fillConvexPoly(maskRoiLane, list_point_ROI, Scalar(255,255,255));
     cv::fillConvexPoly(maskRoiIntersection, list_point_noROI, Scalar(255,255,255));
+    cv::fillConvexPoly(maskRoiLane1D, list_point_ROI, Scalar(255,255,255));
+    cv::fillConvexPoly(maskRoiIntersection1D, list_point_noROI, Scalar(255,255,255));
     //maskROI = &maskRoiIntersection;
     setROI(true);
 }
@@ -42,8 +49,8 @@ void CarControl::init(){
 CarControl::CarControl(){
     carPos.x = CAR_POS_X;
     carPos.y = CAR_POS_Y;
-    steer_publisher = node_obj1.advertise<std_msgs::Float32>("Team1_steerAngle",10);
-    speed_publisher = node_obj2.advertise<std_msgs::Float32>("Team1_speed",10);
+    steer_publisher = node_obj1.advertise<std_msgs::Float32>("team207_steerAngle",10);
+    speed_publisher = node_obj2.advertise<std_msgs::Float32>("team207_speed",10);
 }
 
 CarControl::~CarControl() {}
@@ -446,12 +453,13 @@ void CarControl::driverCar(DetectLane* detect){
     //if (preSteer == DetectLane::null){
     //    cout << "dummy" << endl;
     //}
+    //cout << flag_expand << get_list_point_ROI() << endl;
     vecLeftSpeed = Vec2f(LeftAboveSpeedA.x - LeftBelowSpeedA.x, LeftAboveSpeedA.y - LeftBelowSpeedA.y);
     vecLeftSpeed = vecLeftSpeed / cv::norm(vecLeftSpeed);
     vecRightSpeed = Vec2f(RightAboveSpeedA.x - RightBelowSpeedA.x, RightAboveSpeedA.y - RightBelowSpeedA.y);
     vecRightSpeed = vecRightSpeed / cv::norm(vecRightSpeed);
     vecLeftAngle = Vec2f(LeftAboveAngleA.x - LeftBelowAngleA.x, LeftAboveAngleA.y - LeftBelowAngleA.y);
-    vecLeftAngle = vecLeftAngle / cv::norm(vecLeftAngle);
+    vecLeftAngle = vecLeftAngle / cv::norm(vecLeftAngle);   
     vecRightAngle = Vec2f(RightAboveAngleA.x - RightBelowAngleA.x, RightAboveAngleA.y - RightBelowAngleA.y);
     vecRightAngle = vecRightAngle / cv::norm(vecRightAngle);
     if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 ||
@@ -479,7 +487,24 @@ void CarControl::driverCar(DetectLane* detect){
         //else if (!cooldown) turn = NONE;
         if (turn == NONE) {
             cout << "Di thang" << endl;
-            CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+            vector<Point> middle = detect->getMiddleLaneRaw();
+            if (middle.size()) {
+                //    //Point middleLanePnt;
+                if (i >= 0) {
+                    int k = i;        
+                    while (k < middle.size()){
+                        if (middle[k] != DetectLane::null) {
+                            CarControl::preSteer = middle[k] ;
+                            break;
+                        }
+                        k++;
+                    }
+            //        //= middleLanePnt;
+                }
+            //    //else CarControl::preSteer = LeftBelowAngleA;
+            }
+            //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
+            else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
         }
         else if(turn == TURN_LEFT)  {
             cout << "Re trai" << endl;
@@ -534,7 +559,24 @@ void CarControl::driverCar(DetectLane* detect){
         setROI(true);
     }
     else {
-        CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+        vector<Point> middle = detect->getMiddleLaneRaw();
+        if (middle.size()) {
+            //    //Point middleLanePnt;
+            if (i >= 0) {
+                int k = i;        
+                while (k < middle.size()){
+                    if (middle[k] != DetectLane::null) {
+                        CarControl::preSteer = middle[k] ;
+                        break;
+                    }
+                    k++;
+                }
+        //        //= middleLanePnt;
+            }
+        //    //else CarControl::preSteer = LeftBelowAngleA;
+        }
+        //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
+        else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
         CarControl::preSpeed = NORMAL_SPEED;
         //CarControl::maskROI = &maskRoiLane;
         setROI(false);
@@ -551,6 +593,7 @@ void CarControl::driverCar(DetectLane* detect){
         */
     }
     //cout << turn << endl;
+    cout << CarControl::preSteer << endl;
     Mat test = Mat::zeros(Size(240,320), CV_8UC3);
     cv::line(test, RightAboveSpeedA, RightBelowSpeedA, Scalar(255,0,0), 2);
     cv::line(test, LeftAboveSpeedA, LeftBelowSpeedA, Scalar(0,255,0), 2);

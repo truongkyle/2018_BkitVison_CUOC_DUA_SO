@@ -22,6 +22,7 @@ float signed_dist_point_line(const Point& pnt, const Vec4f& line);
 Point intersection (const Vec4f& line1, Vec4f& line2);
 float calc_X(const int& y, const Vec4f& line);
 float calc_Y(const int& x, const Vec4f& line);
+bool check_segment_list(vector<vector<Point>>& segment_list);
 //class CarControl;
 #define SKYLINE 85
 //#define SKYLINE 85
@@ -35,6 +36,14 @@ float calc_Y(const int& x, const Vec4f& line);
 #define slideThickness 10
 extern Point2f src_vertices[4];
 extern Point2f dst_vertices[4];
+enum SIDE {
+    LEFT,
+    MIDDLE,
+    RIGHT,
+    UNDEFINED
+    //NONE,
+    //ERR
+};
 class DetectLane
 {
 public:
@@ -51,6 +60,12 @@ public:
     };
     vector<Point> getRightLaneRaw(){
         return rightLaneRaw;
+    }
+    vector<Point> getMiddleLaneRaw(){
+        return middleLaneRaw;
+    }
+    SIDE getMiddleLaneSide(){
+        return middleLaneSide;
     }
     //int getLeftLaneSize(){
     //    return leftLane_size;
@@ -71,10 +86,11 @@ public:
 
     Vec4f vecLeft, vecRight;  
 
-    
+    //enum MIDDLE
 private:
     Mat preProcess(const Mat &src);
-    Mat preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane);
+    void preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane);
+    void preProcess(const Mat &src, Mat& imgLane);
 
     Mat morphological(const Mat &imgHSV);
     Mat birdViewTranform(const Mat &source);
@@ -83,7 +99,9 @@ private:
     vector<vector<Point> > centerRoadSide(const vector<Mat> &src, int dir = VERTICAL);
     //void detectLeftRight(const vector<vector<Point> > &points);
     void detectLeftRight(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw);
+    void detectLane(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw, vector<Point>& middleRaw);
     void updateLeftRight(const vector<Point>& leftRaw, const vector<Point>& rightRaw, vector<Point>& left, vector<Point>& right);
+    void updateLane(const vector<Point>& leftRaw, const vector<Point>& rightRaw, const vector<Point>& middleRaw, vector<Point>& left, vector<Point>& right, vector<Point>& middle);
     Mat laneInShadow(const Mat &src);
     /*
     int minThreshold[3] = {0, 0, 180};
@@ -91,22 +109,26 @@ private:
     //int minThreshold[3] = {101, 68, 0};
     //int maxThreshold[3] = {126, 196, 255};
     
-    int minLaneShadowTh[3] = {55, 155, 0};
-    int maxLaneShadowTh[3] = {179, 255, 184};
-    int minLaneNormalTh[3] = {55, 155, 0};
+    int minLaneShadowTh[3] = {66, 72, 24};
+    int maxLaneShadowTh[3] = {111, 104, 58};
+    int minLaneNormalTh[3] = {66, 111, 0};
+    int maxLaneNormalTh[3] = {111, 255, 255};
+    //int minLaneNormalTh[3] = {55, 155, 0};
+    //int maxLaneNormalTh[3] = {179, 255, 184};
     //int minThreshold[3] = {55, 93, 0};
-    int maxLaneNormalTh[3] = {179, 255, 184};
-    int minRoadShadowTh[3] = {90, 43, 36};
-    int maxRoadShadowTh[3] = {120, 81, 171};
-    int minRoadNormalTh[3] = {55, 155, 0};
-    int maxRoadNormalTh[3] = {179, 255, 184};
+
+    int minRoadNormalTh[3] = {34, 0, 0};
+    int maxRoadNormalTh[3] = {96, 93, 14};
+    int minRoadShadowTh[3] = {83, 0, 15};
+    int maxRoadShadowTh[3] = {179, 127, 67};
     int binaryThreshold = 180;
 
     int shadowParam = 40;
 
-    vector<Point> leftLane, rightLane; //, middleLane;
+    SIDE middleLaneSide;
+    vector<Point> leftLane, rightLane, middleLane;
     vector<Point> leftBound, rightBound;
-    vector<Point> leftLaneRaw, rightLaneRaw;
+    vector<Point> leftLaneRaw, rightLaneRaw, middleLaneRaw;
     //vector<Point> leftBoundRaw, rightBoundRaw;
 };
 

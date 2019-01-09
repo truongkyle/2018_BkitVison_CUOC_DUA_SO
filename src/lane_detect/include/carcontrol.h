@@ -27,13 +27,22 @@ public:
     void driverCar(DetectLane* detect);
     void driverCar(DetectLane* detect, const Mat& src);
     static void init();
+    static Mat& getROI1D(){
+        return *maskROI1D;
+    }
     static Mat& getROI(){
         return *maskROI;
     }
     static void setROI(bool expand){
         flag_expand = expand;
-        if (flag_expand) maskROI = &maskRoiLane;
-        else maskROI = &maskRoiIntersection;
+        if (!flag_expand) {
+            maskROI = &maskRoiLane;
+            maskROI1D = &maskRoiLane1D;
+        }
+        else {
+            maskROI = &maskRoiIntersection;
+            maskROI1D = &maskRoiIntersection1D;
+        }
     }
     static vector<Point>& get_list_point_ROI(){
     //flag_expand = expand;
@@ -70,6 +79,9 @@ private:
     int t_kD;
 
     static Mat* maskROI;
+    static Mat* maskROI1D;
+    static Mat maskRoiLane1D;
+    static Mat maskRoiIntersection1D;
     static Mat maskRoiLane;
     static Mat maskRoiIntersection;
     static Point LeftAboveSpeedA, RightAboveSpeedA, LeftBelowSpeedA, RightBelowSpeedA;

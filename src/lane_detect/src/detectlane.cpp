@@ -1,13 +1,16 @@
 #include "carcontrol.h"
 #include "detectlane.h"
-#define MAX_CONTINUITY_DIST 1
+#define MAX_CONTINUITY_DIST 3
+#define MIN_DIST_SEGMENT 13
+#define UPPER_MAX_SEGMENT_SIZE 8
+#define LOWER_MAX_SEGMENT_SIZE 5
+#define SEGMENT_HEIGHT_LIMIT BIRDVIEW_HEIGHT/2
+#define CUTOFF_HEIGHT_LANE_DETECT 0
 
-int min(int a, int b)
-{
+int min(int a, int b){
     return a < b ? a : b;
 }
-int maxx(int a, int b)
-{
+int maxx(int a, int b){
     return a > b ? a : b;
 }
 Scalar ConvertArraytoScalar(int arr[3]);
@@ -20,7 +23,7 @@ float dist_point_line(const Point& pnt, const Vec4f& line);
 Point intersection (const Vec4f& line1, Vec4f& line2);
 float calc_X(const int& y, const Vec4f& line);
 float calc_Y(const int& x, const Vec4f& line);
-
+bool check_segment_list(vector<vector<Point>>& segment_list);
 //int DetectLane::slideThickness = 10;
 /*
 int DetectLane::BIRDVIEW_WIDTH = 240;
@@ -90,18 +93,18 @@ vector<Point> DetectLane::getLeftLane()
     return leftLane;
 }
 
-vector<Point> DetectLane::getRightLane()
-{
+vector<Point> DetectLane::getRightLane(){
     return rightLane;
 }
-
-void DetectLane::update(const Mat &src)
-{
+int countFrame = 0;
+void DetectLane::update(const Mat &src){
+//    cout << countFrame++ << endl;
     //Mat edges;
     //Canny(src, edges, 100, 200);
     //cv::imshow("Canny", edges);
-    Mat img = preProcess(src);
-    vector<Mat> layers1 = splitLayer(img);
+    Mat imgLane;//, imgRoad;
+    preProcess(src, imgLane);
+    vector<Mat> layers1 = splitLayer(imgLane);
     vector<vector<Point> > points1 = centerRoadSide(layers1);
     // vector<Mat> layers2 = splitLayer(img, HORIZONTAL);
     // vector<vector<Point> > points2 = centerRoadSide(layers2, HORIZONTAL)
@@ -117,18 +120,19 @@ void DetectLane::update(const Mat &src)
     //cv::circle(temp3d_1, Point(50, 60), 1, Scalar(255,0,0), 2);
     //cv::imshow("Point", temp3d_1);
     //detectLeftRight(points1);
-    detectLeftRight(points1, leftLaneRaw, rightLaneRaw);
-    updateLeftRight(leftLaneRaw, rightLaneRaw, leftLane, rightLane);
+    //detectLeftRight(points1, leftLaneRaw, rightLaneRaw);
+    detectLane(points1, leftLaneRaw, rightLaneRaw, middleLaneRaw);
+    updateLane(leftLaneRaw, rightLaneRaw, middleLaneRaw, leftLane, rightLane, middleLane);
     Mat birdView, lane;
-    birdView = Mat::zeros(img.size(), CV_8UC3);
-    lane = Mat::zeros(img.size(), CV_8UC3);
-    for (int i = 0; i < points1.size(); i++)
-     {
-        for (int j = 0; j < points1[i].size(); j++)
-        {
-            circle(birdView, points1[i][j], 1, Scalar(0,0,255), 2, 8, 0 );
-        }
-    }
+    //birdView = Mat::zeros(Size(BIRDVIEW_WIDTH, BIRDVIEW_HEIGHT), CV_8UC3);
+    lane = Mat::zeros(Size(BIRDVIEW_WIDTH, BIRDVIEW_HEIGHT), CV_8UC3);
+    //for (int i = 0; i < points1.size(); i++)
+    //{
+    //    for (int j = 0; j < points1[i].size(); j++)
+    //    {
+    //        circle(birdView, points1[i][j], 1, Scalar(0,0,255), 2, 8, 0 );
+    //    }
+    //}
 
     /*
     vector<Vec2f> lines;
@@ -187,18 +191,21 @@ void DetectLane::update(const Mat &src)
 
     // imshow("Debug", birdView);
 
-    for (int i = 1; i < leftLane.size(); i++)
-    {
-        if (leftLane[i] != null)
-        {
+    for (int i = 1; i < leftLane.size(); i++){
+        if (leftLane[i] != null) {
             circle(lane, leftLane[i], 1, Scalar(0,0,255), 2, 8, 0 );
         }
     }
 
-    for (int i = 1; i < rightLane.size(); i++)
-    {
+    for (int i = 1; i < rightLane.size(); i++){
         if (rightLane[i] != null) {
             circle(lane, rightLane[i], 1, Scalar(255,0,0), 2, 8, 0 );
+        }
+    }
+
+    for (int i = 1; i < middleLane.size(); i++){
+        if (middleLane[i] != null) {
+            circle(lane, middleLane[i], 1, Scalar(0,255,0), 2, 8, 0 );
         }
     }
 
@@ -278,7 +285,7 @@ Mat DetectLane::preProcess(const Mat &src){
 
     vector<vector<Point>> contours;
     cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    //cout << "test";
+\\\\\\\\\\//cout << "test";
     vector<Point> max_contour;
     double max_area = 0;
     for (vector<Point> contour : contours){
@@ -352,7 +359,7 @@ Mat DetectLane::preProcess(const Mat &src){
 
     vector<vector<Point>> contours;
     cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    //cout << "test";
+    //cout << "test";                CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
     vector<Point> max_contour;
     double max_area = 0;
     for (int i = 0; i < contours.size(); i++){
@@ -375,8 +382,8 @@ Mat DetectLane::preProcess(const Mat &src){
     return dst;
     
 }
-/*
-Mat DetectLane::preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane){
+//void DetectLane::preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane);
+void DetectLane::preProcess(const Mat &src, Mat& imgLane){
     /*
     Mat imgThresholded, imgHLS, dst;
 
@@ -499,56 +506,75 @@ Mat DetectLane::preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane){
 
     return dst;
     */
-    /*
-    Mat imgThresholded, imgHLS, dst;
-
-    cvtColor(src, imgHLS, COLOR_BGR2HLS);
     
-    //cv::GaussianBlur(imgHLS, imgHLS, Size(17,17), 0.);
+    Mat imgThresholded, imgHLS, blur_imgHLS;
+
+    //cv::imshow("ThresholdLane", CarControl::getROI());
+    cvtColor(src, imgHLS, COLOR_BGR2HLS);
+
+    //cv::GaussianBlur(imgHLS, blur_imgHLS, Size(17,17), 0.);//, 0.);
+    //cv::medianBlur(src, blur_image, 11);
+    
+    //imgHLS = imgHLS & CarControl::getROI();
+    //blur_imgHLS = blur_imgHLS & CarControl::getROI();
+    //cvtColor(blur_imgHLS, blur_imgHLS, COLOR_BGR2HLS);
+    
 //cout << "test";
 
     //cout << maskROI3d.size();
     //cout << blur_img.size();
     //Mat maskROI;
-    imgHLS = imgHLS & CarControl::getROI();
+    //imgHLS = imgHLS & CarControl::getROI();
+    //blur_imgHLS = blur_imgHLS & CarControl::getROI();
 //cout << "test";
-    Mat maskRoadNormal;
-    cv::inRange(imgHLS, ConvertArraytoScalar(minRoadNormalTh), ConvertArraytoScalar(maxRoadNormalTh), maskRoadNormal);
+    //Mat maskRoadNormal;
+    //cv::inRange(blur_imgHLS, ConvertArraytoScalar(minRoadNormalTh), ConvertArraytoScalar(maxRoadNormalTh), maskRoadNormal);
     //Mat mask2;
     //cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
-    Mat maskRoadShadow;
-    cv::inRange(imgHLS, ConvertArraytoScalar(minRoadShadowTh), ConvertArraytoScalar(maxRoadShadowTh), maskRoadShadow);
-    
-    Mat maskRoadCombined = maskRoadNormal | maskRoadShadow;
+    //Mat maskRoadShadow;
+    //cv::inRange(blur_imgHLS, ConvertArraytoScalar(minRoadShadowTh), ConvertArraytoScalar(maxRoadShadowTh), maskRoadShadow);
+    //Mat maskRoadCombined = maskRoadNormal | maskRoadShadow;
 
-    vector<vector<Point>> contours;
-    cv::findContours(maskRoadCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    Mat maskLaneNormal;
+    cv::inRange(imgHLS, ConvertArraytoScalar(minLaneNormalTh), ConvertArraytoScalar(maxLaneNormalTh), maskLaneNormal);
+    Mat maskLaneShadow;
+    cv::inRange(imgHLS, ConvertArraytoScalar(minLaneShadowTh), ConvertArraytoScalar(maxLaneShadowTh), maskLaneShadow);
+    Mat maskLaneCombined = maskLaneNormal | maskLaneShadow;
+    //maskRoadCombined = maskRoadCombined & CarControl::getROI();
+    //cv::imshow("ThresholdRoad", maskRoadCombined);
+    cv::imshow("ThresholdLane", maskLaneCombined);
+    //cv::imshow("ThresholdLane", maskRoadShadow);
+    //imshow("BinaryRoad", maskRoadCombined);
+    //vector<vector<Point>> contours;
+    //cv::findContours(maskRoadCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
     //cout << "test";
-    vector<Point> max_contour;
-    double max_area = 0;
-    for (const vector<Point>& contour : contours){//int i = 0; i < contours.size(); i++){
-        //double cnt_area = cv::contourArea(contours[i]);
-        double cnt_area = cv::contourArea(contour);
-        if (cnt_area > max_area){
-            max_area = cnt_area;
-            max_contour = contour;
-        }
-    }
-    vector<vector<Point>> max_contour_dummy;
-    max_contour_dummy.push_back(max_contour);
-    maskCombined = Mat::zeros(Size(320,240), CV_8U);
-    cv::drawContours(maskCombined, max_contour_dummy, -1, 255, 2);  
+    //vector<Point> max_contour;
+    //double max_area = 0;
+    //for (const vector<Point>& contour : contours){//int i = 0; i < contours.size(); i++){
+    //    //double cnt_area = cv::contourArea(contours[i]);
+    //    double cnt_area = cv::contourArea(contour);
+    //    if (cnt_area > max_area){
+    //        max_area = cnt_area;
+    //        max_contour = contour;
+    //    }
+    //}
+    //vector<vector<Point>> max_contour_dummy;
+    //max_contour_dummy.push_back(max_contour);
+    //maskRoadCombined = Mat::zeros(Size(320,240), CV_8U);
+    //cv::drawContours(maskRoadCombined, vector<vector<Point>>{max_contour}, -1, 255, 1);  
     //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
-    imshow("Binary", maskCombined);
+    //imshow("BinaryRoad", maskRoadCombined);
     // for (int i = 0; i < points2.size(); i++)
-    dst = birdViewTranform(maskCombined);
-    fillLane(dst);
-    imshow("Bird View", dst);
+    //imgRoad = birdViewTranform(maskRoadCombined);
+    //fillLane(imgRoad);
+    //imshow("Bird View Road", imgRoad);
+    imgLane = birdViewTranform(maskLaneCombined);
+    fillLane(imgLane);
+    imshow("Bird View Lane", imgLane);
     //return dst; 
 }
-*/
-Mat DetectLane::laneInShadow(const Mat &imgHLS)
-{
+
+Mat DetectLane::laneInShadow(const Mat &imgHLS){
     Mat shadowMask, shadow, shadowHLS, laneShadow;
 /*
     inRange(src, Scalar(minShadowTh[0], minShadowTh[1], minShadowTh[2]),
@@ -566,25 +592,21 @@ Mat DetectLane::laneInShadow(const Mat &imgHLS)
     return laneShadow;
 }
 
-void DetectLane::fillLane(Mat &src)
-{
+void DetectLane::fillLane(Mat &src){
     vector<Vec4i> lines;
     HoughLinesP(src, lines, 1, CV_PI/180, 1);
-    for( size_t i = 0; i < lines.size(); i++ )
-    {
+    for( size_t i = 0; i < lines.size(); i++ ){
         Vec4i& l = lines[i];
         line(src, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255), 3, CV_AA);
     }
 }
 
-vector<Mat> DetectLane::splitLayer(const Mat &src, int dir)
-{
+vector<Mat> DetectLane::splitLayer(const Mat &src, int dir){
     int rowN = src.rows;
     int colN = src.cols;
     std::vector<Mat> res;
     //cout << rowN << endl;
-    if (dir == VERTICAL)
-    {
+    if (dir == VERTICAL){
         for (int i = 0; i <= rowN - slideThickness; i += slideThickness) {
             Mat tmp;
             Rect crop(0, i, colN, slideThickness);
@@ -593,8 +615,7 @@ vector<Mat> DetectLane::splitLayer(const Mat &src, int dir)
             //cout << i << endl;
         }
     }
-    else 
-    {
+    else {
         for (int i = 0; i <= colN - slideThickness; i += slideThickness) {
             Mat tmp;
             Rect crop(i, 0, slideThickness, rowN);
@@ -606,8 +627,7 @@ vector<Mat> DetectLane::splitLayer(const Mat &src, int dir)
     return res;
 }
 
-vector<vector<Point> > DetectLane::centerRoadSide(const vector<Mat> &src, int dir)
-{
+vector<vector<Point> > DetectLane::centerRoadSide(const vector<Mat> &src, int dir){
     vector<std::vector<Point> > res;
     int inputN = src.size();
     //cout << inputN << endl;
@@ -629,8 +649,7 @@ vector<vector<Point> > DetectLane::centerRoadSide(const vector<Mat> &src, int di
                 if (dir == VERTICAL) {
                     center1.y = center1.y + slideThickness*i;
                 } 
-                else
-                {
+                else {
                     center1.x = center1.x + slideThickness*i;
                 }
                 if (center1.x > 0 && center1.y > 0) {
@@ -646,8 +665,7 @@ vector<vector<Point> > DetectLane::centerRoadSide(const vector<Mat> &src, int di
 int countcpp = 0;
 int neg_count = 0;
 int neg_count_thresh = 5;
-void DetectLane::detectLeftRight(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw)
-{
+void DetectLane::detectLeftRight(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw){
     //static vector<Point> lane1, lane2;
     vector<Point> lane1, lane2;
     //lane1.clear();
@@ -721,7 +739,7 @@ void DetectLane::detectLeftRight(const vector<vector<Point> > &points, vector<Po
                 vector<Point> temp_lane2;
                 while (temp_max2 > 0){
                     temp_lane2.push_back(points[temp_posMax2.x][temp_posMax2.y]);
-                    //if (max2 == 1) break;
+                    //if (max2 == 1) break;                CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
                     Point2i temp = temp_posMax2;
                     temp_posMax2.y = prePoint[temp.x][temp.y];
                     temp_posMax2.x = prePointX[temp.x][temp.y];        
@@ -932,6 +950,467 @@ void DetectLane::detectLeftRight(const vector<vector<Point> > &points, vector<Po
     */
     //else return;
 }
+//int countFrame = 0;
+void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>& leftRaw, vector<Point>& rightRaw, vector<Point>& middleRaw){
+    //static vector<Point> lane1, lane2;
+    //cout << countFrame++ << endl;
+    vector<Point> lane1, lane2, lane3;
+    //lane1.clear();
+    //lane2.clear();
+    
+    int pointMap[points.size()][20] = {};
+
+    int prePoint[points.size()][20] = {};
+    int postPoint[points.size()][20] = {};
+
+    int prePointX[points.size()][20] = {};
+    int postPointX[points.size()][20] = {};
+
+    int dis = 10;
+    int max = 0, max2 = 0, max3 = 0;
+    Point2i posMax, posMax2;
+
+    //memset(pointMap, 0, sizeof pointMap);
+
+    for (int i = CUTOFF_HEIGHT_LANE_DETECT; i < points.size(); i++){
+        for (int j = 0; j < points[i].size(); j++){
+            prePointX[i][j] = -1;
+            postPointX[i][j] = -1;
+
+            pointMap[i][j] = 1;
+            prePoint[i][j] = -1;
+            postPoint[i][j] = -1;
+        }
+    }
+    for (int i = points.size() - 1; i >= CUTOFF_HEIGHT_LANE_DETECT; i--){
+        for (int j = 0; j < points[i].size(); j++){
+            int err = 320;
+            for (int m = 1; m < min((int) points.size() - 1 - i, MAX_CONTINUITY_DIST + 1); m++){
+                //bool check = false;
+                for (int k = 0; k < points[i + m].size(); k++){
+                    if (abs(points[i + m][k].x - points[i][j].x) <= dis && 
+                        abs(points[i + m][k].x - points[i][j].x) < err) 
+                    {
+                        err = abs(points[i + m][k].x - points[i][j].x);
+                        pointMap[i][j] = pointMap[i + m][k] + 1;
+                        prePoint[i][j] = k;
+                        prePointX[i][j] = i + m;
+                        postPoint[i + m][k] = j;
+                        postPointX[i + m][k] = i;
+                        //check = true;
+                    }
+                }   
+                //break; 
+            }
+            
+            if (pointMap[i][j] > max){
+                max = pointMap[i][j];
+                posMax = Point2i(i, j);
+            }
+        }
+    }
+        
+    if (max <= 1) return;
+
+    for (int i = points.size() - 1; i >= 0; i--){
+        for (int j = 0; j < points[i].size(); j++){
+            if (pointMap[i][j] > max2 && (i > posMax.x || (i == posMax.x && j != posMax.y)) && postPoint[i][j] == -1){
+                //int temp_max = pointMap[i][j];
+                //while (temp_max > 1)
+                max2 = pointMap[i][j];
+                posMax2 = Point2i(i,j);
+                /*
+                int temp_max2 = pointMap[i][j];
+                Point2i temp_posMax2 = Point2i(i,j);
+                //lane2.clear();
+                vector<Point> temp_lane2;
+                while (temp_max2 > 0){
+                    temp_lane2.push_back(points[temp_posMax2.x][temp_posMax2.y]);
+                    //if (max2 == 1) break;
+                    Point2i temp = temp_posMax2;
+                    temp_posMax2.y = prePoint[temp.x][temp.y];
+                    temp_posMax2.x = prePointX[temp.x][temp.y];        
+                    temp_max2--;
+                }
+                //if (temp_lane2.back() != lane1.back())
+                if (abs(temp_lane2.back().x - lane1.back().x) > 15 ){ 
+                    max2 = temp_max2;
+                    posMax2 = temp_posMax2;
+                    lane2 = temp_lane2;
+                }
+                */
+            }
+        }
+    }
+    /*
+    for (int i = points.size() - 1; i >= 0; i--){
+        for (int j = 0; j < points[i].size(); j++){
+            if (pointMap[i][j] > max3 && (i > posMax.x || (i == posMax.x && j != posMax.y)) && (i != posMax2.x && j != posMax2.y) && postPoint[i][j] == -1){
+                //int temp_max = pointMap[i][j];
+                //while (temp_max > 1)
+                max3 = pointMap[i][j];
+                posMax2 = Point2i(i,j);
+                /*
+                int temp_max2 = pointMap[i][j];
+                Point2i temp_posMax2 = Point2i(i,j);
+                //lane2.clear();
+                vector<Point> temp_lane2;
+                while (temp_max2 > 0){
+                    temp_lane2.push_back(points[temp_posMax2.x][temp_posMax2.y]);
+                    //if (max2 == 1) break;
+                    Point2i temp = temp_posMax2;
+                    temp_posMax2.y = prePoint[temp.x][temp.y];
+                    temp_posMax2.x = prePointX[temp.x][temp.y];        
+                    temp_max2--;
+                }
+                //if (temp_lane2.back() != lane1.back())
+                if (abs(temp_lane2.back().x - lane1.back().x) > 15 ){ 
+                    max2 = temp_max2;
+                    posMax2 = temp_posMax2;
+                    lane2 = temp_lane2;
+                }
+                *//*
+            }
+        }
+    }
+    */
+    if (max2 <= 1) return;
+
+    Point2i posMax_temp = posMax;
+    vector<vector<Point>> segment_list1, segment_list2;
+    vector<Point> segment_cur; //segment_pre2, segment_cur2;
+    
+    while (max > 0){
+        lane1.push_back(points[posMax_temp.x][posMax_temp.y]);
+        Point temp = posMax_temp;
+        posMax_temp.y = prePoint[temp.x][temp.y];
+        posMax_temp.x = prePointX[temp.x][temp.y];
+        if (points[temp.x][temp.y].y >= SEGMENT_HEIGHT_LIMIT){
+            segment_cur.push_back(points[temp.x][temp.y]);
+            //if (max2 == 1) break;
+            Point next_point;
+            if (max > 1) next_point = points[posMax_temp.x][posMax_temp.y];
+            if (max == 1 || dist_point_point(next_point, segment_cur.back()) >= MIN_DIST_SEGMENT) {
+                segment_list1.push_back(segment_cur);
+                segment_cur.clear();
+                //segment_cur1.push_back(Point(posMax_temp));
+                //segment_pre = segment_cur1;
+            }
+        }
+        max--;
+    }
+    while (max2 > 0){
+        lane2.push_back(points[posMax2.x][posMax2.y]);
+        Point temp = posMax2;
+        posMax2.y = prePoint[temp.x][temp.y];
+        posMax2.x = prePointX[temp.x][temp.y];
+        if (points[temp.x][temp.y].y >= SEGMENT_HEIGHT_LIMIT){
+            segment_cur.push_back(points[temp.x][temp.y]);
+            //if (max2 == 1) break;
+            Point next_point;
+            if (max2 > 1) next_point = points[posMax2.x][posMax2.y];
+            if (max2 == 1 || dist_point_point(next_point, segment_cur.back()) >= MIN_DIST_SEGMENT) {
+                segment_list2.push_back(segment_cur);
+                segment_cur.clear();
+                //segment_cur1.push_back(Point(posMax_temp));
+                //segment_pre = segment_cur1;
+            }
+        }
+        max2--;
+    }
+    //if (max2 <= 1) return;
+    //bool potential_middle1 = false, potential_middle2 = false;
+    bool potential_middle1 = true, potential_middle2 = true;
+    //for (const vector<Point>& segment: segment_list1){
+    //    if (segment.size() > LOWER_MAX_SEGMENT_SIZE) {
+    //        potential_middle1 = false;
+    //        break;
+    //    }
+    //}
+    //for (const vector<Point>& segment: segment_list2){
+    //    if (segment.size() > LOWER_MAX_SEGMENT_SIZE) {
+    //        potential_middle2 = false;
+    //        break;
+    //    }
+    //}
+    //if (segment_list1.size() >= 4) potential_middle1 = true;
+    if (segment_list1.size() > 2){
+        int list_size = segment_list1.size();
+        //if (list_size == 2) list_size = 3;
+        int stop_index = list_size == 2 ? 0 : 1;
+        if (segment_list1[0].size() >= UPPER_MAX_SEGMENT_SIZE) potential_middle1 = false;
+        else{
+            for (int i = list_size - 1; i >= stop_index; i--){
+                if (segment_list1[i].size() <= LOWER_MAX_SEGMENT_SIZE){
+                    //cout << i << " " << segment_list1[i].size() << " " << segment_list1[i + 1].size() << endl;
+                    if (i > stop_index && segment_list1[i].size() > segment_list1[i - 1].size()){
+                        potential_middle1 = false;
+                        break;
+                    }
+                }
+                else {
+                    potential_middle1 = false;
+                    break;
+                }
+            }
+        }
+        //potential_middle1 = segment_list1[list_size - 1].size() <= LOWER_MAX_SEGMENT_SIZE && segment_list1[list_size - 2].size() <= LOWER_MAX_SEGMENT_SIZE;
+    }
+    else potential_middle1 = false;
+    //if (segment_list2.size() >= 4) potential_middle2 = true;
+    if (segment_list2.size() > 2){
+        int list_size = segment_list2.size();
+        //if (list_size == 2) list_size = 3;
+        int stop_index = list_size == 2 ? 0 : 1;
+        if (segment_list2[0].size() >= UPPER_MAX_SEGMENT_SIZE) potential_middle2 = false;
+        else{
+            for (int i = list_size - 1; i >= stop_index; i--){
+                if (segment_list2[i].size() <= LOWER_MAX_SEGMENT_SIZE){
+                    //cout << i << " " << segment_list2[i].size() << " " << segment_list2[i + 1].size() << endl;
+                    if (i > stop_index && segment_list2[i].size() > segment_list2[i - 1].size()){
+                        potential_middle2 = false;
+                        break;
+                    }
+                }
+                else {
+                    potential_middle2 = false;
+                    break;
+                }
+            }
+        }
+        //potential_middle2 = segment_list2[list_size - 1].size() <= LOWER_MAX_SEGMENT_SIZE && segment_list2[list_size - 2].size() <= LOWER_MAX_SEGMENT_SIZE;
+    }
+    else potential_middle2 = false;
+    //bool potential_middlelane_or_obstacle_or_shadow2 = segment_list2.size() > 1;
+
+    //cout << lane1.size() << endl;
+    
+    if (countFrame == 660){
+        cout << "HERE" << endl;
+    }
+    Vec4f line1, line2;
+    int lane_flag = 0;
+    if (lane1.size() > 1) {
+        vector<Point> subLane1(lane1.end() - min(5, lane1.size()), lane1.end());
+        fitLine(subLane1, line1, 2, 0, 0.01, 0.01);
+        lane_flag++;
+    }
+    if (lane2.size() > 1) {
+        vector<Point> subLane2(lane2.end() - min(5, lane2.size()), lane2.end());
+        fitLine(subLane2, line2, 2, 0, 0.01, 0.01);
+        lane_flag++;
+    }
+    
+
+
+
+    //int lane_flag_left = 0, lane_flag_right = 0;
+    if (lane_flag == 2){
+        //lane_flag_left = 1;
+        //lane_flag_right = 1;
+        int lane1X = (BIRDVIEW_HEIGHT - line1[3]) * line1[0] / line1[1] + line1[2];
+        int lane2X = (BIRDVIEW_HEIGHT - line2[3]) * line2[0] / line2[1] + line2[2];
+        //Mat test = Mat::zeros(Size(240,320), CV_8UC3);
+        //cv::circle(test, lane1[0], 1, Scalar(255,255,0), 2);
+        //Point first1 = Point(0, (0-line1[2]) * line1[1] / line1[0] + line1[3]);
+        //Point second1 = Point(240, (240-line1[2]) * line1[1] / line1[0] + line1[3]);
+        //Point first2 = Point(0, (0-line2[2]) * line2[1] / line2[0] + line2[3]);
+        //Point second2 = Point(240, (240-line2[2]) * line2[1] / line2[0] + line2[3]);
+        //cv::line(test, first1, second1, Scalar(255,0,0), 2);
+        //cv::line(test, first2, second2, Scalar(255,0,0), 2);
+        //cout << line1 << " * " << line2 << endl;
+        //cv::imshow("Test", test);
+        //cout << lane1[0] << endl;
+        //cout << ((line1[1] * line2[1] + line2[0] * line1[0])) << " * " << abs((line1[1] * line2[1] + line2[0] * line1[0]))  << endl;
+        //cout << lane1.size() << " " << lane2.size() << endl;
+        if (lane1X < lane2X){
+            //if (abs(line1[0] * line2[0] + line1[1] * line2[1]) > 0.98)
+            //DetectLane::vecLeft = line1;
+            //DetectLane::vecRight = line2;
+
+            //for (int i = 0; i < lane1.size(); i++)
+            //{
+                /*
+                if (lane2[i] != DetectLane::null){
+                    if (lane1[i].x > lane2[i].x) {
+                        leftLane[floor(lane2[i].y / slideThickness)] = lane2[i];
+                        continue;
+                    }
+                }
+                */
+            //    leftLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+            //}
+            //for (int i = 0; i < lane2.size(); i++)
+            //{
+                /*
+                if (lane1[i] != DetectLane::null){
+                    if (lane1[i].x > lane2[i].x) {
+                        rightLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+                        continue;
+                    }
+                }
+                */
+            //    rightLane[floor(lane2[i].y / slideThickness)] = lane2[i];
+            //}
+            //leftLane_size = lane1.size();
+            //rightLane_size = lane2.size();
+            //Point rez_pnt = intersection(line1, line2);
+            //if (rez_pnt == null | rez_pnt.y < maxx(lane1.back().y, lane2.back().y)){
+            //    leftRaw = lane1;
+            //    rightRaw = lane2;
+            //} else {
+        //Point rez_pnt = intersection(line1, line2);
+            if (dist_point_line(lane1.back(), line2) < 5 || dist_point_line(lane2.back(), line1) < 5){
+            //if (calc_X(CAR_POS_Y, line1) - CAR_POS_X > 0 && calc_X(CAR_POS_Y, line2) - CAR_POS_X < 0){
+                if (angleLine(line1, line2) > 10){
+                    leftRaw = lane2;
+                    rightRaw = lane1;
+                    //cout << "TH1<<<<<<<<<<<<<<<<<<<<<<<<<" << endl;
+                }
+                //middleRaw.clear();
+                //middleLaneSide = UNDEFINED;
+            }
+            else{
+                leftRaw = lane1;
+                rightRaw = lane2;
+                if (potential_middle1 && !potential_middle2){
+                    middleRaw = lane1;
+                    //middleLaneSide = LEFT;
+                //    rightRaw = lane2;
+                }
+                else if (!potential_middle1 && potential_middle2){
+                    middleRaw = lane2;
+                    //middleLaneSide = RIGHT;
+                //    leftRaw = lane1;
+                }
+                //else if (potential_middle1 && potential_middle2){
+                //    if (segment_list1.size() > segment_list2.size()){
+                //        middleRaw = lane1;
+                //    }
+                //    else if (segment_list1.size() < segment_list2.size()){
+                //        middleRaw = lane2;
+                //    }
+                //}
+                else if (!potential_middle1 && !potential_middle2){
+                //    leftRaw = lane1;
+                //    rightRaw = lane2;
+                //    middleLaneSide = UNDEFINED;
+                    middleRaw.clear();
+                }
+                //cout << "TH2..............................." << endl;
+            }
+        } else {
+            if (dist_point_line(lane1.back(), line2) < 5 || dist_point_line(lane2.back(), line1) < 5){
+            //if (calc_X(CAR_POS_Y, line1) - CAR_POS_X > 0 && calc_X(CAR_POS_Y, line2) - CAR_POS_X < 0){
+                if (angleLine(line1, line2) > 10){
+                    leftRaw = lane1;
+                    rightRaw = lane2;
+                    //cout << "TH3***********************" << endl;
+                }
+                //middleRaw.clear();
+                //middleLaneSide = UNDEFINED;
+            }
+            else{
+                leftRaw = lane2;
+                rightRaw = lane1;
+                if (!potential_middle1 && potential_middle2){
+                    middleRaw = lane2;
+                //    middleLaneSide = LEFT;
+                //    leftRaw = lane1;
+                }
+                else if (potential_middle1 && !potential_middle2){
+                    middleRaw = lane1;
+                //    middleLaneSide = RIGHT;
+                //    rightRaw = lane2;
+                }
+                //else if (potential_middle1 && potential_middle2){
+                //    if (segment_list1.size() > segment_list2.size()){
+                //        middleRaw = lane1;
+                //    }
+                //    else if (segment_list1.size() < segment_list2.size()){
+                //        middleRaw = lane2;
+                //    }
+                //}
+                else if (!potential_middle1 && !potential_middle2){
+                //    leftRaw = lane1;
+                //    rightRaw = lane2;
+                //    middleLaneSide = UNDEFINED;
+                    middleRaw.clear();
+                }
+                /*  
+                vector<Point> subLane2(lane2.end() - min(5, lane2.size()), lane2.end());
+                cout << subLane2.size() << "--" << endl;
+                cout << line1 << endl;
+                cout << line2 << endl;
+                cout << lane1X << " " << lane2X << endl;
+                cout << lane1.size() << " " << lane2.size() << endl;
+                cout << angleLine(line1, line2) << endl;
+                cout << dist_point_line(lane1.back(), line2) << "*" << endl;
+                cout << dist_point_line(lane2.back(), line1) << "]]" << endl;
+                */
+            }
+        }
+            //DetectLane::vecLeft = line1;
+            //DetectLane::vecRight = line2;
+            //for (int i = 0; i < lane2.size(); i++)
+            //{
+                /*
+                if (lane1[i] != DetectLane::null){
+                    if (lane1[i].x < lane2[i].x) {
+                        leftLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+                        continue;
+                    }
+                }
+                */
+            //    leftLane[floor(lane2[i].y / slideThickness)] = lane2[i];
+            //}
+            //for (int i = 0; i < lane1.size(); i++)
+            //{
+                /*
+                if (lane2[i] != DetectLane::null){
+                    if (lane1[i].x < lane2[i].x) {
+                        rightLane[floor(lane2[i].y / slideThickness)] = lane2[i];
+                        continue;
+                    }
+                }
+                */
+             //   rightLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+            //}
+            //Point rez_pnt = intersection(line1, line2);
+            //leftRaw = lane2;
+            //rightRaw = lane1;
+            //leftLane_size = lane2.size();
+            //rightLane_size = lane1.size();
+        //}
+        //cout << rightLane.size() << "*" << leftLane.size() << endl;
+    }
+    // Tim cach detect lane //
+    /*
+    else if (lane_flag == 1){
+        if (lane1.size() > 1){
+            if (lane1.back().x < CAR_POS_X) {
+                //lane_flag_left = 1;
+                leftRaw = lane1;
+            }
+            else if (lane1.back().x > CAR_POS_X) {
+                //lane_flag_right = 1;
+                rightRaw = lane1;
+            }
+        } 
+        else{
+            if (lane2.back().x < CAR_POS_X) {
+                //lane_flag_left = 1;
+                leftRaw = lane2;
+            }
+            else if (lane2.back().x > CAR_POS_X) {
+                //lane_flag_right = 1;
+                rightRaw = lane2;
+            }
+        } 
+    }
+    */
+    //else return;
+}
 
 void DetectLane::updateLeftRight(const vector<Point>& leftRaw, const vector<Point>& rightRaw, vector<Point>& left, vector<Point>& right){
     left.clear();
@@ -964,7 +1443,50 @@ void DetectLane::updateLeftRight(const vector<Point>& leftRaw, const vector<Poin
         right[floor(rightRaw[i].y / slideThickness)] = rightRaw[i];
     }
 }
+void DetectLane::updateLane(const vector<Point>& leftRaw, const vector<Point>& rightRaw, const vector<Point>& middleRaw, vector<Point>& left, vector<Point>& right, vector<Point>& middle){
+    left.clear();
+    right.clear();
+    middle.clear();
+    for (int i = 0; i < BIRDVIEW_HEIGHT / slideThickness; i++){
+        left.push_back(null);
+        right.push_back(null);
+        middle.push_back(null);
+    }
+    for (int i = 0; i < leftRaw.size(); i++){
+                /*
+                if (lane1[i] != DetectLane::null){
+                    if (lane1[i].x < lane2[i].x) {
+                        leftLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+                        continue;
+                    }
+                }
+                */
+        left[floor(leftRaw[i].y / slideThickness)] = leftRaw[i];
+    }
 
+    for (int i = 0; i < rightRaw.size(); i++){
+            /*
+            if (lane1[i] != DetectLane::null){
+                if (lane1[i].x < lane2[i].x) {
+                    leftLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+                    continue;
+                }
+            }
+            */
+        right[floor(rightRaw[i].y / slideThickness)] = rightRaw[i];
+    }
+    for (int i = 0; i < middleRaw.size(); i++){
+            /*
+            if (lane1[i] != DetectLane::null){
+                if (lane1[i].x < lane2[i].x) {
+                    leftLane[floor(lane1[i].y / slideThickness)] = lane1[i];
+                    continue;
+                }
+            }
+            */
+        middle[floor(middleRaw[i].y / slideThickness)] = middleRaw[i];
+    }
+}
 Mat DetectLane::morphological(const Mat &img)
 {
     Mat dst;
@@ -1106,4 +1628,20 @@ float calc_Y(const int& x, const Vec4f& line){
 
 Scalar ConvertArraytoScalar(int arr[3]){
     return Scalar(arr[0], arr[1], arr[2]);
+}
+bool check_segment_list(vector<vector<Point>>& segment_list){
+    if (segment_list.size() < 3 || segment_list[0].size() >= UPPER_MAX_SEGMENT_SIZE) return false;
+    int list_size = segment_list.size();
+
+    for (int i = list_size - 1; i >= 0; i--){
+        if (segment_list[i].size() <= LOWER_MAX_SEGMENT_SIZE){
+            //cout << i << " " << segment_list2[i].size() << " " << segment_list2[i + 1].size() << endl;
+            if (i > 0 && segment_list2[i].size() > segment_list2[i - 1].size()){
+                potential_middle2 = false;
+                break;
+            }
+        }
+        else return false;
+    }
+    return true;
 }

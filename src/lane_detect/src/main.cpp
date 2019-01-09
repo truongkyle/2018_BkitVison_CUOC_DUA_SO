@@ -10,11 +10,11 @@
 #include "polyfit.h"
 #define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
-#define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_735.jpg"
+#define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_0659.jpg"
 #define VIDEO_OR_IMAGE "video" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_left_2.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_right_2.xml"
-#define STREAM true
+#define STREAM false
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -25,13 +25,11 @@ CarControl *car;
 int skipFrame = 1;
 void detectAndDisplay(Mat frame);
 void draw_polygon(Mat& dst, const vector<Point>);
-void imageCallback(const sensor_msgs::ImageConstPtr &msg)
-{
+void imageCallback(const sensor_msgs::ImageConstPtr &msg){
     static int count = 0;
     cv_bridge::CvImagePtr cv_ptr;
     Mat out;
-    try
-    {
+    try{
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
         DetectSign::store_image(cv_ptr->image);
         //waitKey(1);
@@ -46,17 +44,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg)
         //count++;
         //cv::waitKey(30);
     }
-    catch (cv_bridge::Exception &e)
-    {
+    catch (cv_bridge::Exception &e){
         ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
     }
 }
 
-void videoProcess()
-{
+void videoProcess(){
     Mat src;
-    while (true)
-    {
+    while (true){
         //cout << "Test";
         capture >> src;
         if (src.empty())
@@ -68,13 +63,12 @@ void videoProcess()
         car->driverCar(detect);
         draw_polygon(src, CarControl::get_list_point_ROI());
         imshow("View", src);
-        waitKey(30);
+        //waitKey(0);
+        waitKey(0);
     }
 }
-void imageProcess()
-{
-    while (true)
-    {
+void imageProcess(){
+    while (true){
         Mat src = cv::imread(IMAGE_PATH);
         if (src.empty())
             return;
@@ -90,14 +84,14 @@ void imageProcess()
     }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
     ros::init(argc, argv, "image_listener");
     cv::namedWindow("View");
-    cv::namedWindow("Binary");
-    cv::namedWindow("ThresholdRoad");
+    //cv::namedWindow("BinaryRoad");
+    //cv::namedWindow("ThresholdRoad");
     cv::namedWindow("ThresholdLane");
-    cv::namedWindow("Bird View");
+    //cv::namedWindow("Bird View Road");
+    cv::namedWindow("Bird View Lane");
     //cv::namedWindow("Bird View Filled");
     //cv::namedWindow("Bird View fix shadow");
     //cv::namedWindow("Point");
@@ -110,18 +104,16 @@ int main(int argc, char **argv)
     DetectSign::init(HAAR_TRAFFIC_SIGN_LEFT_DIR, HAAR_TRAFFIC_SIGN_RIGHT_DIR);
     detect = new DetectLane();
     car = new CarControl();
-    if (STREAM)
-    {
+    if (STREAM){
         cv::startWindowThread();
 
         ros::NodeHandle nh;
         image_transport::ImageTransport it(nh);
-        image_transport::Subscriber sub = it.subscribe("Team1_image", 1, imageCallback);
+        image_transport::Subscriber sub = it.subscribe("team207_image", 1, imageCallback);
 
         ros::spin();
     }
-    else
-    {
+    else{
         //cv::startWindowThread();
         //cout << "Test" << endl;
         if (!strcmp(VIDEO_OR_IMAGE, "video"))
@@ -132,7 +124,7 @@ int main(int argc, char **argv)
     //video.release();
     cv::destroyAllWindows();
 }
-
+/*
 void detectAndDisplay(Mat frame)
 {
     CascadeClassifier traffic_sign_cascade;
@@ -150,6 +142,7 @@ void detectAndDisplay(Mat frame)
     //-- Show what you got
     imshow("Capture - Face detection", frame);
 }
+*/
 /*
 int main(int argc, char **argv)
 {
