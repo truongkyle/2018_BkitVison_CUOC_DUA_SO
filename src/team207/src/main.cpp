@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 
@@ -12,9 +13,9 @@
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 #define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_735.jpg"
 #define VIDEO_OR_IMAGE "video" // Or "image"
-#define HAAR_TRAFFIC_SIGN_LEFT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_left_2.xml"
-#define HAAR_TRAFFIC_SIGN_RIGHT_DIR "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/Traffic sign/cascade_right_2.xml"
-#define STREAM true
+#define HAAR_TRAFFIC_SIGN_LEFT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_left_2.xml"
+#define HAAR_TRAFFIC_SIGN_RIGHT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_right_2.xml"
+#define STREAM false
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -58,6 +59,7 @@ void videoProcess()
     while (true)
     {
         //cout << "Test";
+        //cout << HAAR_TRAFFIC_SIGN_LEFT_DIR << endl;
         capture >> src;
         if (src.empty())
             break;

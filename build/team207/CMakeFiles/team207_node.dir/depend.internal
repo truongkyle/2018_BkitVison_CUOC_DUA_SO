@@ -39,6 +39,7 @@ team207/CMakeFiles/team207_node.dir/src/main.cpp.o
  /opt/ros/melodic/include/ros/message_traits.h
  /opt/ros/melodic/include/ros/names.h
  /opt/ros/melodic/include/ros/node_handle.h
+ /opt/ros/melodic/include/ros/package.h
  /opt/ros/melodic/include/ros/param.h
  /opt/ros/melodic/include/ros/parameter_adapter.h
  /opt/ros/melodic/include/ros/platform.h
