@@ -2,7 +2,7 @@
 CATKIN_PACKAGE_PREFIX = ""
 PROJECT_PKG_CONFIG_INCLUDE_DIRS = "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include".split(';') if "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/lane_detect/include" != "" else []
 PROJECT_CATKIN_DEPENDS = "roscpp".replace(';', ' ')
-PKG_CONFIG_LIBRARIES_WITH_PREFIX = "-lapi_lane_detection".split(';') if "-lapi_lane_detection" != "" else []
-PROJECT_NAME = "lane_detect"
+PKG_CONFIG_LIBRARIES_WITH_PREFIX = "-lteam207".split(';') if "-lteam207" != "" else []
+PROJECT_NAME = "team207"
 PROJECT_SPACE_DIR = "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel"
 PROJECT_VERSION = "0.0.0"

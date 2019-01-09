@@ -168,34 +168,34 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-lane_detect/CMakeFiles/lane_detect.dir/rule:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f CMakeFiles/Makefile2 lane_detect/CMakeFiles/lane_detect.dir/rule
-.PHONY : lane_detect/CMakeFiles/lane_detect.dir/rule
+lane_detect/CMakeFiles/team207_node.dir/rule:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f CMakeFiles/Makefile2 lane_detect/CMakeFiles/team207_node.dir/rule
+.PHONY : lane_detect/CMakeFiles/team207_node.dir/rule
 
 # Convenience name for target.
-lane_detect: lane_detect/CMakeFiles/lane_detect.dir/rule
+team207_node: lane_detect/CMakeFiles/team207_node.dir/rule
 
-.PHONY : lane_detect
+.PHONY : team207_node
 
 # fast build rule for target.
-lane_detect/fast:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/build
-.PHONY : lane_detect/fast
+team207_node/fast:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/build
+.PHONY : team207_node/fast
 
 # Convenience name for target.
-lane_detect/CMakeFiles/api_lane_detection.dir/rule:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f CMakeFiles/Makefile2 lane_detect/CMakeFiles/api_lane_detection.dir/rule
-.PHONY : lane_detect/CMakeFiles/api_lane_detection.dir/rule
+lane_detect/CMakeFiles/team207.dir/rule:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f CMakeFiles/Makefile2 lane_detect/CMakeFiles/team207.dir/rule
+.PHONY : lane_detect/CMakeFiles/team207.dir/rule
 
 # Convenience name for target.
-api_lane_detection: lane_detect/CMakeFiles/api_lane_detection.dir/rule
+team207: lane_detect/CMakeFiles/team207.dir/rule
 
-.PHONY : api_lane_detection
+.PHONY : team207
 
 # fast build rule for target.
-api_lane_detection/fast:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/build
-.PHONY : api_lane_detection/fast
+team207/fast:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/build
+.PHONY : team207/fast
 
 src/carcontrol.o: src/carcontrol.cpp.o
 
@@ -203,7 +203,7 @@ src/carcontrol.o: src/carcontrol.cpp.o
 
 # target to build an object file
 src/carcontrol.cpp.o:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.o
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/carcontrol.cpp.o
 .PHONY : src/carcontrol.cpp.o
 
 src/carcontrol.i: src/carcontrol.cpp.i
@@ -212,7 +212,7 @@ src/carcontrol.i: src/carcontrol.cpp.i
 
 # target to preprocess a source file
 src/carcontrol.cpp.i:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.i
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/carcontrol.cpp.i
 .PHONY : src/carcontrol.cpp.i
 
 src/carcontrol.s: src/carcontrol.cpp.s
@@ -221,7 +221,7 @@ src/carcontrol.s: src/carcontrol.cpp.s
 
 # target to generate assembly for a file
 src/carcontrol.cpp.s:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/carcontrol.cpp.s
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/carcontrol.cpp.s
 .PHONY : src/carcontrol.cpp.s
 
 src/detect_traffic_sign.o: src/detect_traffic_sign.cpp.o
@@ -230,7 +230,7 @@ src/detect_traffic_sign.o: src/detect_traffic_sign.cpp.o
 
 # target to build an object file
 src/detect_traffic_sign.cpp.o:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.o
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o
 .PHONY : src/detect_traffic_sign.cpp.o
 
 src/detect_traffic_sign.i: src/detect_traffic_sign.cpp.i
@@ -239,7 +239,7 @@ src/detect_traffic_sign.i: src/detect_traffic_sign.cpp.i
 
 # target to preprocess a source file
 src/detect_traffic_sign.cpp.i:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.i
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.i
 .PHONY : src/detect_traffic_sign.cpp.i
 
 src/detect_traffic_sign.s: src/detect_traffic_sign.cpp.s
@@ -248,7 +248,7 @@ src/detect_traffic_sign.s: src/detect_traffic_sign.cpp.s
 
 # target to generate assembly for a file
 src/detect_traffic_sign.cpp.s:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detect_traffic_sign.cpp.s
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.s
 .PHONY : src/detect_traffic_sign.cpp.s
 
 src/detectlane.o: src/detectlane.cpp.o
@@ -257,7 +257,7 @@ src/detectlane.o: src/detectlane.cpp.o
 
 # target to build an object file
 src/detectlane.cpp.o:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.o
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detectlane.cpp.o
 .PHONY : src/detectlane.cpp.o
 
 src/detectlane.i: src/detectlane.cpp.i
@@ -266,7 +266,7 @@ src/detectlane.i: src/detectlane.cpp.i
 
 # target to preprocess a source file
 src/detectlane.cpp.i:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.i
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detectlane.cpp.i
 .PHONY : src/detectlane.cpp.i
 
 src/detectlane.s: src/detectlane.cpp.s
@@ -275,7 +275,7 @@ src/detectlane.s: src/detectlane.cpp.s
 
 # target to generate assembly for a file
 src/detectlane.cpp.s:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/detectlane.cpp.s
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/detectlane.cpp.s
 .PHONY : src/detectlane.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -284,7 +284,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.o
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -293,7 +293,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.i
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -302,7 +302,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/src/main.cpp.s
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/polyfit.o: src/polyfit.cpp.o
@@ -311,7 +311,7 @@ src/polyfit.o: src/polyfit.cpp.o
 
 # target to build an object file
 src/polyfit.cpp.o:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.o
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/polyfit.cpp.o
 .PHONY : src/polyfit.cpp.o
 
 src/polyfit.i: src/polyfit.cpp.i
@@ -320,7 +320,7 @@ src/polyfit.i: src/polyfit.cpp.i
 
 # target to preprocess a source file
 src/polyfit.cpp.i:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.i
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/polyfit.cpp.i
 .PHONY : src/polyfit.cpp.i
 
 src/polyfit.s: src/polyfit.cpp.s
@@ -329,7 +329,7 @@ src/polyfit.s: src/polyfit.cpp.s
 
 # target to generate assembly for a file
 src/polyfit.cpp.s:
-	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/src/polyfit.cpp.s
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/src/polyfit.cpp.s
 .PHONY : src/polyfit.cpp.s
 
 # Help Target
@@ -340,11 +340,11 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... install"
-	@echo "... lane_detect"
-	@echo "... api_lane_detection"
+	@echo "... team207_node"
 	@echo "... install/local"
 	@echo "... test"
 	@echo "... list_install_components"
+	@echo "... team207"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... src/carcontrol.o"

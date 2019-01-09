@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 
         ros::NodeHandle nh;
         image_transport::ImageTransport it(nh);
-        image_transport::Subscriber sub = it.subscribe("Team1_image", 1, imageCallback);
+        image_transport::Subscriber sub = it.subscribe("team207_image", 1, imageCallback);
 
         ros::spin();
     }
