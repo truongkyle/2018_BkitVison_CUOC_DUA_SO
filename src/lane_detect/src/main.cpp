@@ -31,12 +31,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg){
     Mat out;
     try{
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-        DetectSign::store_image(cv_ptr->image);
+        Mat& src = cv_ptr->image;
+        DetectSign::store_image(src);
         //waitKey(1);
-        detect->update(cv_ptr->image);
+        detect->update(src);
         car->driverCar(detect);
-        draw_polygon(cv_ptr->image, CarControl::get_list_point_ROI());
-        cv::imshow("View", cv_ptr->image);
+        draw_polygon(src, CarControl::get_list_point_ROI());
+        cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
+        cv::imshow("View", src);
 
         //std::string path = "/home/hoquangnam/Documents/CuocDuaSo/Ảnh fastest/Test" + std::to_string(count) + ".jpg";
         //cv::imwrite(path, cv_ptr->image);
@@ -62,6 +64,7 @@ void videoProcess(){
         detect->update(src);
         car->driverCar(detect);
         draw_polygon(src, CarControl::get_list_point_ROI());
+        cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         imshow("View", src);
         //waitKey(0);
         waitKey(0);
@@ -77,6 +80,7 @@ void imageProcess(){
         detect->update(src);
         car->driverCar(detect);
         draw_polygon(src, CarControl::get_list_point_ROI());
+        cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         cv::imshow("View", src); //cv::imshow("Test", CarControl::maskROI);
         waitKey(30);
         //detectAndDisplay(src);
@@ -104,6 +108,7 @@ int main(int argc, char **argv){
     DetectSign::init(HAAR_TRAFFIC_SIGN_LEFT_DIR, HAAR_TRAFFIC_SIGN_RIGHT_DIR);
     detect = new DetectLane();
     car = new CarControl();
+    detect->init();
     if (STREAM){
         cv::startWindowThread();
 
@@ -172,3 +177,4 @@ void draw_polygon(Mat& dst, const vector<Point> list_point){
     for (int i = 0; i < list_point.size(); i++)
         cv::line(dst, list_point[i], list_point[(i+1) % list_point.size()], Scalar(0,255,0), 3);
 }
+//void 

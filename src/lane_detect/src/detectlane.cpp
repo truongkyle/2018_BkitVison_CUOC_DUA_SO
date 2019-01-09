@@ -98,7 +98,7 @@ vector<Point> DetectLane::getRightLane(){
 }
 int countFrame = 0;
 void DetectLane::update(const Mat &src){
-//    cout << countFrame++ << endl;
+    cout << countFrame++ << endl;
     //Mat edges;
     //Canny(src, edges, 100, 200);
     //cv::imshow("Canny", edges);
@@ -1120,7 +1120,8 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
     }
     //if (max2 <= 1) return;
     //bool potential_middle1 = false, potential_middle2 = false;
-    bool potential_middle1 = true, potential_middle2 = true;
+    bool potential_middle1 = check_segment_list(segment_list1), 
+         potential_middle2 = check_segment_list(segment_list2);
     //for (const vector<Point>& segment: segment_list1){
     //    if (segment.size() > LOWER_MAX_SEGMENT_SIZE) {
     //        potential_middle1 = false;
@@ -1134,6 +1135,7 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
     //    }
     //}
     //if (segment_list1.size() >= 4) potential_middle1 = true;
+    /*
     if (segment_list1.size() > 2){
         int list_size = segment_list1.size();
         //if (list_size == 2) list_size = 3;
@@ -1182,11 +1184,11 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
     }
     else potential_middle2 = false;
     //bool potential_middlelane_or_obstacle_or_shadow2 = segment_list2.size() > 1;
-
+    */
     //cout << lane1.size() << endl;
     
-    if (countFrame == 660){
-        cout << "HERE" << endl;
+    if (countFrame == 1036){
+        cout << "HERE" << countFrame << endl;
     }
     Vec4f line1, line2;
     int lane_flag = 0;
@@ -1502,9 +1504,9 @@ Mat DetectLane::morphological(const Mat &img)
     return dst;
 }
 
-void transform(Point2f* src_vertices, Point2f* dst_vertices, const Mat& src, Mat &dst){
-    Mat M = getPerspectiveTransform(src_vertices, dst_vertices);
-    warpPerspective(src, dst, M, dst.size(), INTER_LINEAR, BORDER_CONSTANT);
+void DetectLane::transform(Point2f* src_vertices, Point2f* dst_vertices, const Mat& src, Mat &dst){
+    //Mat M = getPerspectiveTransform(src_vertices, dst_vertices);
+    warpPerspective(src, dst, warpMatrix, dst.size(), INTER_LINEAR, BORDER_CONSTANT);
 }
 
 Mat DetectLane::birdViewTranform(const Mat &src)
@@ -1636,9 +1638,8 @@ bool check_segment_list(vector<vector<Point>>& segment_list){
     for (int i = list_size - 1; i >= 0; i--){
         if (segment_list[i].size() <= LOWER_MAX_SEGMENT_SIZE){
             //cout << i << " " << segment_list2[i].size() << " " << segment_list2[i + 1].size() << endl;
-            if (i > 0 && segment_list2[i].size() > segment_list2[i - 1].size()){
-                potential_middle2 = false;
-                break;
+            if (i > 0 && segment_list[i].size() > segment_list[i - 1].size()){
+                return false;
             }
         }
         else return false;

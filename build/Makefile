@@ -1156,30 +1156,30 @@ demo_topic_subscriber/fast:
 .PHONY : demo_topic_subscriber/fast
 
 #=============================================================================
-# Target rules for targets named lane_detect
+# Target rules for targets named team207_node
 
 # Build rule for target.
-lane_detect: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 lane_detect
-.PHONY : lane_detect
+team207_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 team207_node
+.PHONY : team207_node
 
 # fast build rule for target.
-lane_detect/fast:
-	$(MAKE) -f lane_detect/CMakeFiles/lane_detect.dir/build.make lane_detect/CMakeFiles/lane_detect.dir/build
-.PHONY : lane_detect/fast
+team207_node/fast:
+	$(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/build
+.PHONY : team207_node/fast
 
 #=============================================================================
-# Target rules for targets named api_lane_detection
+# Target rules for targets named team207
 
 # Build rule for target.
-api_lane_detection: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 api_lane_detection
-.PHONY : api_lane_detection
+team207: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 team207
+.PHONY : team207
 
 # fast build rule for target.
-api_lane_detection/fast:
-	$(MAKE) -f lane_detect/CMakeFiles/api_lane_detection.dir/build.make lane_detect/CMakeFiles/api_lane_detection.dir/build
-.PHONY : api_lane_detection/fast
+team207/fast:
+	$(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/build
+.PHONY : team207/fast
 
 #=============================================================================
 # Target rules for targets named video_stream
@@ -1283,8 +1283,8 @@ help:
 	@echo "... demo_topic_publisher"
 	@echo "... mastering_ros_demo_pkg_gennodejs"
 	@echo "... demo_topic_subscriber"
-	@echo "... lane_detect"
-	@echo "... api_lane_detection"
+	@echo "... team207_node"
+	@echo "... team207"
 	@echo "... video_stream"
 .PHONY : help
 

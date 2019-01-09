@@ -322,7 +322,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "mastering_ros_demo_pkg/CMakeFiles/demo_topic_publisher.dir/DependInfo.cmake"
   "mastering_ros_demo_pkg/CMakeFiles/mastering_ros_demo_pkg_gennodejs.dir/DependInfo.cmake"
   "mastering_ros_demo_pkg/CMakeFiles/demo_topic_subscriber.dir/DependInfo.cmake"
-  "lane_detect/CMakeFiles/lane_detect.dir/DependInfo.cmake"
-  "lane_detect/CMakeFiles/api_lane_detection.dir/DependInfo.cmake"
+  "lane_detect/CMakeFiles/team207_node.dir/DependInfo.cmake"
+  "lane_detect/CMakeFiles/team207.dir/DependInfo.cmake"
   "video_stream/CMakeFiles/video_stream.dir/DependInfo.cmake"
   )

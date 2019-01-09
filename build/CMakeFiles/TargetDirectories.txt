@@ -118,11 +118,11 @@
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/mastering_ros_demo_pkg/CMakeFiles/demo_topic_subscriber.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/install/strip.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/install.dir
-/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/lane_detect.dir
-/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/api_lane_detection.dir
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/team207_node.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/install/local.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/test.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/list_install_components.dir
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/team207.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/edit_cache.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/lane_detect/CMakeFiles/rebuild_cache.dir
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/video_stream/CMakeFiles/install/strip.dir

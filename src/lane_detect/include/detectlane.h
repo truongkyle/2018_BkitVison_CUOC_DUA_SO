@@ -85,7 +85,22 @@ public:
     static Point null; //
 
     Vec4f vecLeft, vecRight;  
-
+    //Point get_original_center_road(){
+    //    vector<Point2f> dstPoints, srcPoints;
+    //    dstPoints.push_back(Point2f(preSteer));
+    //    cv::perspectiveTransform(dstPoints,srcPoints,warpMatrix.inv());
+    //}
+    void init(){
+        warpMatrix = getPerspectiveTransform(src_vertices, dst_vertices);
+        warpMatrixInv = getPerspectiveTransform(dst_vertices, src_vertices);
+    }
+    Mat& getWarpMatrix(){
+        return warpMatrix;
+    }
+    Mat& getWarpMatrixInv(){
+        return warpMatrixInv;
+    }
+    void transform(Point2f* src_vertices, Point2f* dst_vertices, const Mat& src, Mat &dst);
     //enum MIDDLE
 private:
     Mat preProcess(const Mat &src);
@@ -129,6 +144,8 @@ private:
     vector<Point> leftLane, rightLane, middleLane;
     vector<Point> leftBound, rightBound;
     vector<Point> leftLaneRaw, rightLaneRaw, middleLaneRaw;
+    Mat warpMatrix;
+    Mat warpMatrixInv;
     //vector<Point> leftBoundRaw, rightBoundRaw;
 };
 

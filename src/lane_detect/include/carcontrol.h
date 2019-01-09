@@ -16,6 +16,7 @@ using namespace std;
 using namespace cv;
 
 class DetectLane;
+Point unWarpPoint(Point& pnt, Mat& warpMatrixInv);
 extern vector<Point> list_point_ROI;
 extern vector<Point> list_point_noROI;
 class CarControl 
@@ -51,6 +52,9 @@ public:
     }
     Point get_car_pos(){
         return carPos;
+    }
+    Point& get_center_road(){
+        return preSteer;
     }
 private:
     float errorAngle(const Point &dst);
