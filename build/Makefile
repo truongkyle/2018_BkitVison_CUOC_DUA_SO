@@ -1165,7 +1165,7 @@ team207_node: cmake_check_build_system
 
 # fast build rule for target.
 team207_node/fast:
-	$(MAKE) -f lane_detect/CMakeFiles/team207_node.dir/build.make lane_detect/CMakeFiles/team207_node.dir/build
+	$(MAKE) -f team207/CMakeFiles/team207_node.dir/build.make team207/CMakeFiles/team207_node.dir/build
 .PHONY : team207_node/fast
 
 #=============================================================================
@@ -1178,7 +1178,7 @@ team207: cmake_check_build_system
 
 # fast build rule for target.
 team207/fast:
-	$(MAKE) -f lane_detect/CMakeFiles/team207.dir/build.make lane_detect/CMakeFiles/team207.dir/build
+	$(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/build
 .PHONY : team207/fast
 
 #=============================================================================
