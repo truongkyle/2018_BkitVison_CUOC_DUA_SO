@@ -6,6 +6,8 @@
 #define LOWER_MAX_SEGMENT_SIZE 5
 #define SEGMENT_HEIGHT_LIMIT BIRDVIEW_HEIGHT/2
 #define CUTOFF_HEIGHT_LANE_DETECT 0
+#define MIN_SEGMENT_NUMBER_REQUIREMENT 3
+#define SEGMENT_SIZE_REQUIREMENT 3
 
 int min(int a, int b){
     return a < b ? a : b;
@@ -98,7 +100,7 @@ vector<Point> DetectLane::getRightLane(){
 }
 int countFrame = 0;
 void DetectLane::update(const Mat &src){
-    cout << countFrame++ << endl;
+    //cout << countFrame++ << endl;
     //cout << "hihi" << endl;
     //Mat edges;
     //Canny(src, edges, 100, 200);
@@ -1639,7 +1641,7 @@ bool check_segment_list(vector<vector<Point>>& segment_list){
     //}
     //cout<<endl;
     //cout << "hehe" << endl;
-    if (segment_list.size() < 3 || segment_list[0].size() >= UPPER_MAX_SEGMENT_SIZE) return false;
+    if (segment_list.size() < MIN_SEGMENT_NUMBER_REQUIREMENT || segment_list[0].size() >= UPPER_MAX_SEGMENT_SIZE) return false;
     int max_segment_size = 0;
     for (int i = list_size - 1; i >= 0; i--){
         if (segment_list[i].size() <= LOWER_MAX_SEGMENT_SIZE){
@@ -1660,6 +1662,6 @@ bool check_segment_list(vector<vector<Point>>& segment_list){
     //    cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
     //}
     //cout << total_pnt << "*" << endl;
-    if (max_segment_size < 3) return false;
+    if (max_segment_size < SEGMENT_SIZE_REQUIREMENT) return false;
     return true;
 }

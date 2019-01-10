@@ -10,8 +10,12 @@
 #define OFFSET_POS 8
 #define TRAFFIC_SIGN_COOLDOWN 10
 #define TURN_SPEED 40
-#define NORMAL_SPEED 60
+//#define NORMAL_SPEED 60
 #define CAR_POS_RADIUS 10
+#define SLOW_SPEED 40
+//#define MEDIUM_SPEED
+#define FAST_SPEED 60
+#define SMALL_TURN_ANGLE_UPPER_LIM 10
 
 Point craftPoint(const Point& carPos, const Vec2f& vec);
 Point craftPoint(const Point& carPos, const float& angle);
@@ -581,7 +585,10 @@ void CarControl::driverCar(DetectLane* detect){
         }
         //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
         else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
-        CarControl::preSpeed = NORMAL_SPEED;
+        
+        if (abs(error) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
+        else CarControl::preSpeed = SLOW_SPEED;
+        //CarControl::preSpeed = NORMAL_SPEED;
         //CarControl::maskROI = &maskRoiLane;
         setROI(false);
         //turn = NONE;
@@ -604,7 +611,9 @@ void CarControl::driverCar(DetectLane* detect){
     cv::line(test, RightAboveAngleA, RightBelowAngleA, Scalar(255,255,0), 2);
     cv::line(test, LeftAboveAngleA, LeftBelowAngleA, Scalar(0,255,255), 2);
     cv::imshow("Test", test);
+    
     error = errorAngle(CarControl::preSteer);
+    //cout << "sadad" << error << endl;
     angle.data = error;
     speed.data = CarControl::preSpeed;
     //cout << angle.data << endl;

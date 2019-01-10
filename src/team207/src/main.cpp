@@ -68,7 +68,7 @@ void videoProcess(){
         cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         imshow("View", src);
         //waitKey(0);
-        waitKey(0);
+        waitKey(30);
     }
 }
 void imageProcess(){
