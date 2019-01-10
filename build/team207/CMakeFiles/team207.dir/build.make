@@ -153,12 +153,62 @@ team207/CMakeFiles/team207.dir/src/polyfit.cpp.o.provides: team207/CMakeFiles/te
 team207/CMakeFiles/team207.dir/src/polyfit.cpp.o.provides.build: team207/CMakeFiles/team207.dir/src/polyfit.cpp.o
 
 
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o: team207/CMakeFiles/team207.dir/flags.make
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o -c /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.i"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp > CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.i
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.s"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp -o CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.s
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.requires:
+
+.PHONY : team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.requires
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.provides: team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.requires
+	$(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.provides.build
+.PHONY : team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.provides
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.provides.build: team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o
+
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o: team207/CMakeFiles/team207.dir/flags.make
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o -c /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.i"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp > CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.i
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.s"
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp -o CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.s
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.requires:
+
+.PHONY : team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.requires
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.provides: team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.requires
+	$(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.provides.build
+.PHONY : team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.provides
+
+team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.provides.build: team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o
+
+
 # Object files for target team207
 team207_OBJECTS = \
 "CMakeFiles/team207.dir/src/detectlane.cpp.o" \
 "CMakeFiles/team207.dir/src/carcontrol.cpp.o" \
 "CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o" \
-"CMakeFiles/team207.dir/src/polyfit.cpp.o"
+"CMakeFiles/team207.dir/src/polyfit.cpp.o" \
+"CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o" \
+"CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o"
 
 # External object files for target team207
 team207_EXTERNAL_OBJECTS =
@@ -167,9 +217,11 @@ team207_EXTERNAL_OBJECTS =
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/src/carcontrol.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/src/polyfit.cpp.o
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/build.make
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so: team207/CMakeFiles/team207.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX shared library /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel/lib/libteam207.so"
 	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207 && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/team207.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -181,6 +233,8 @@ team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/dete
 team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/carcontrol.cpp.o.requires
 team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o.requires
 team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/polyfit.cpp.o.requires
+team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o.requires
+team207/CMakeFiles/team207.dir/requires: team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o.requires
 
 .PHONY : team207/CMakeFiles/team207.dir/requires
 

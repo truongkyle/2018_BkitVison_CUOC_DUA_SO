@@ -1,2 +1,2 @@
-file_server:mastering_ros_demo_pkg:team207:video_stream
+team207
 -DCMAKE_BUILD_TYPE=Debug -DCATKIN_DEVEL_PREFIX=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/devel -DCMAKE_INSTALL_PREFIX=/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/install -G Unix Makefiles

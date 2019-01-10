@@ -5,6 +5,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/carcontrol.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/carcontrol.cpp.o"
+  "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o"
+  "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_traffic_sign.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detectlane.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/detectlane.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/polyfit.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/polyfit.cpp.o"
@@ -20,7 +22,8 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/include/opencv"
+  "/usr/local/include"
+  "/usr/local/include/opencv"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include"
   "/opt/ros/melodic/include"
   "/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"

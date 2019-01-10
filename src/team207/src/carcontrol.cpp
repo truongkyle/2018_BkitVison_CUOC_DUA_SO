@@ -1,6 +1,8 @@
 #include "detectlane.h"
 #include "carcontrol.h"
 #include "detect_traffic_sign.h"
+#include "detect_obstacle.h"
+
 #define DIST_SPEED 10
 #define DIST_SPEED_B 4
 #define DIST_ANGLE 2
@@ -586,8 +588,9 @@ void CarControl::driverCar(DetectLane* detect){
         //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
         else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
         
-        if (abs(error) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
+        if (abs(errorAngle(CarControl::preSteer)) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
         else CarControl::preSpeed = SLOW_SPEED;
+        //cout << abs(error) << endl;
         //CarControl::preSpeed = NORMAL_SPEED;
         //CarControl::maskROI = &maskRoiLane;
         setROI(false);

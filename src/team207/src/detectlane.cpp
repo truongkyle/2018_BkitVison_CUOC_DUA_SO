@@ -8,6 +8,8 @@
 #define CUTOFF_HEIGHT_LANE_DETECT 0
 #define MIN_SEGMENT_NUMBER_REQUIREMENT 3
 #define SEGMENT_SIZE_REQUIREMENT 3
+#define DIST_SIDE_LANE_MID_LANE_UPPER_LIM 35
+#define DIST_SIDE_LANE_MID_LANE_LOWER_LIM 25
 
 int min(int a, int b){
     return a < b ? a : b;
@@ -1121,10 +1123,31 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
         }
         max2--;
     }
+
+    Vec4f line1, line2; //dist_point_point()
+    int lane_flag = 0;
+    if (lane1.size() > 1) {
+        vector<Point> subLane1(lane1.end() - min(5, lane1.size()), lane1.end());
+        fitLine(subLane1, line1, 2, 0, 0.01, 0.01);
+        lane_flag++;
+    }
+    if (lane2.size() > 1) {
+        vector<Point> subLane2(lane2.end() - min(5, lane2.size()), lane2.end());
+        fitLine(subLane2, line2, 2, 0, 0.01, 0.01);
+        lane_flag++;
+    }
+
+    bool potential_middle1, potential_middle2;
+    //if(check_distance(lane1, lane2, line1, line2)) {
+        potential_middle1 = check_segment_list(segment_list1);
+        potential_middle2 = check_segment_list(segment_list2);
+    //}
+    //else {
+    //    potential_middle1 = false;
+    //    potential_middle2 = false;  
+    //}
     //if (max2 <= 1) return;
     //bool potential_middle1 = false, potential_middle2 = false;
-    bool potential_middle1 = check_segment_list(segment_list1), 
-         potential_middle2 = check_segment_list(segment_list2);
     //for (const vector<Point>& segment: segment_list1){
     //    if (segment.size() > LOWER_MAX_SEGMENT_SIZE) {
     //        potential_middle1 = false;
@@ -1193,18 +1216,18 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
     if (countFrame == 1027){
         cout << "HERE" << countFrame << endl;
     }
-    Vec4f line1, line2; //dist_point_point()
-    int lane_flag = 0;
-    if (lane1.size() > 1) {
-        vector<Point> subLane1(lane1.end() - min(5, lane1.size()), lane1.end());
-        fitLine(subLane1, line1, 2, 0, 0.01, 0.01);
-        lane_flag++;
-    }
-    if (lane2.size() > 1) {
-        vector<Point> subLane2(lane2.end() - min(5, lane2.size()), lane2.end());
-        fitLine(subLane2, line2, 2, 0, 0.01, 0.01);
-        lane_flag++;
-    }
+    //Vec4f line1, line2; //dist_point_point()
+    //int lane_flag = 0;
+    //if (lane1.size() > 1) {
+    //    vector<Point> subLane1(lane1.end() - min(5, lane1.size()), lane1.end());
+    //    fitLine(subLane1, line1, 2, 0, 0.01, 0.01);
+    //    lane_flag++;
+    //}
+    //if (lane2.size() > 1) {
+    //    vector<Point> subLane2(lane2.end() - min(5, lane2.size()), lane2.end());
+    //    fitLine(subLane2, line2, 2, 0, 0.01, 0.01);
+    //    lane_flag++;
+    //}
     
 
 
@@ -1635,9 +1658,10 @@ Scalar ConvertArraytoScalar(int arr[3]){
     return Scalar(arr[0], arr[1], arr[2]);
 }
 bool check_segment_list(vector<vector<Point>>& segment_list){
+    
     int list_size = segment_list.size();
     //for (int i = list_size - 1; i >= 0; i--){
-    //    cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+    //    cout << i << " " << segment_list[i].size() << " " << segment_list[i -, 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
     //}
     //cout<<endl;
     //cout << "hehe" << endl;
@@ -1657,11 +1681,27 @@ bool check_segment_list(vector<vector<Point>>& segment_list){
         else return false;
     }
     int total_pnt = 0;
-    //for (int i = list_size - 1; i >= 0; i--){
-    //    total_pnt += segment_list[i].size();
-    //    cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
-    //}
+    for (int i = list_size - 1; i >= 0; i--){
+        total_pnt += segment_list[i].size();
+        //cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+    }
     //cout << total_pnt << "*" << endl;
+
+    //****Tính trung bình độ dài segment */
+
     if (max_segment_size < SEGMENT_SIZE_REQUIREMENT) return false;
     return true;
+}
+bool check_distance(vector<Point>& lane1, vector<Point>& lane2, Vec4f& line1, Vec4f& line2){
+    if (dist_point_line(lane1.front(), line2) < DIST_SIDE_LANE_MID_LANE_UPPER_LIM && 
+        dist_point_line(lane1.front(), line2) > DIST_SIDE_LANE_MID_LANE_LOWER_LIM &&
+        //dist_point_line(lane1.back(), line2) < DIST_SIDE_LANE_MID_LANE_UPPER_LIM && 
+        //dist_point_line(lane1.back(), line2) > DIST_SIDE_LANE_MID_LANE_LOWER_LIM &&
+
+        dist_point_line(lane2.front(), line1) < DIST_SIDE_LANE_MID_LANE_UPPER_LIM && 
+        dist_point_line(lane2.front(), line1) > DIST_SIDE_LANE_MID_LANE_LOWER_LIM &&
+        dist_point_line(lane2.back(), line1) < DIST_SIDE_LANE_MID_LANE_UPPER_LIM && 
+        dist_point_line(lane2.back(), line1) > DIST_SIDE_LANE_MID_LANE_LOWER_LIM
+        ) return true;
+    return false;
 }

@@ -9,3 +9,4 @@
 # modified environment variables
 export PATH="/opt/ros/melodic/bin:/home/hoquangnam/.local/bin:~/miniconda3/bin:/home/hoquangnam/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/hoquangnam/.dotnet/tools:/home/hoquangnam/.dotnet/tools"
 export PWD="/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build"
+export PYTHONPATH="/opt/ros/melodic/lib/python2.7/dist-packages"

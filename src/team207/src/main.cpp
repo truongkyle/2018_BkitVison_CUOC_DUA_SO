@@ -9,12 +9,15 @@
 #include "carcontrol.h"
 #include "detect_traffic_sign.h"
 #include "polyfit.h"
+#include "detect_obstacle.h"
+
 #define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 #define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_0659.jpg"
 #define VIDEO_OR_IMAGE "video" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_left_2.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_right_2.xml"
+#define HAAR_ROCK_DIR ros::package::getPath("team207") + "/Obstacle/cascade_rock.xml"
 #define STREAM true
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
@@ -45,7 +48,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg){
         //cv::imwrite(path, cv_ptr->image);
         //video.write(cv_ptr->image);
         //count++;
-        //cv::waitKey(30);
+        cv::waitKey(30);
     }
     catch (cv_bridge::Exception &e){
         ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
