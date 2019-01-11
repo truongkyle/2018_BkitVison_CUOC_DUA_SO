@@ -653,6 +653,33 @@ src/cv_bridge/rgb_colors.cpp.s:
 	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.s
 .PHONY : src/cv_bridge/rgb_colors.cpp.s
 
+src/detect_obstacle.o: src/detect_obstacle.cpp.o
+
+.PHONY : src/detect_obstacle.o
+
+# target to build an object file
+src/detect_obstacle.cpp.o:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o
+.PHONY : src/detect_obstacle.cpp.o
+
+src/detect_obstacle.i: src/detect_obstacle.cpp.i
+
+.PHONY : src/detect_obstacle.i
+
+# target to preprocess a source file
+src/detect_obstacle.cpp.i:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.i
+.PHONY : src/detect_obstacle.cpp.i
+
+src/detect_obstacle.s: src/detect_obstacle.cpp.s
+
+.PHONY : src/detect_obstacle.s
+
+# target to generate assembly for a file
+src/detect_obstacle.cpp.s:
+	cd /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build && $(MAKE) -f team207/CMakeFiles/team207.dir/build.make team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.s
+.PHONY : src/detect_obstacle.cpp.s
+
 src/detect_traffic_sign.o: src/detect_traffic_sign.cpp.o
 
 .PHONY : src/detect_traffic_sign.o
@@ -810,6 +837,9 @@ help:
 	@echo "... src/cv_bridge/rgb_colors.o"
 	@echo "... src/cv_bridge/rgb_colors.i"
 	@echo "... src/cv_bridge/rgb_colors.s"
+	@echo "... src/detect_obstacle.o"
+	@echo "... src/detect_obstacle.i"
+	@echo "... src/detect_obstacle.s"
 	@echo "... src/detect_traffic_sign.o"
 	@echo "... src/detect_traffic_sign.i"
 	@echo "... src/detect_traffic_sign.s"

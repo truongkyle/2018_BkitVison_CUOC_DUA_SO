@@ -2,6 +2,7 @@
 #include "carcontrol.h"
 #include "detect_traffic_sign.h"
 #include "detect_obstacle.h"
+#include "my_define.h"
 
 #define DIST_SPEED 10
 #define DIST_SPEED_B 4
@@ -469,32 +470,108 @@ void CarControl::driverCar(DetectLane* detect){
     vecLeftAngle = vecLeftAngle / cv::norm(vecLeftAngle);   
     vecRightAngle = Vec2f(RightAboveAngleA.x - RightBelowAngleA.x, RightAboveAngleA.y - RightBelowAngleA.y);
     vecRightAngle = vecRightAngle / cv::norm(vecRightAngle);
-    if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 ||
-        vecLeftAngle.dot(vecRightAngle) < 0.99 ||
-        vecLeftAngle.dot(vecLeftSpeed) < 0.99 ||
-        vecRightAngle.dot(vecRightSpeed) < 0.99 ||
-        (detect->getLeftLaneRaw().size() <= 15 && detect->getRightLaneRaw().size() <= 15)){
-        cout << vecLeftSpeed.dot(vecRightSpeed) << " " << vecLeftAngle.dot(vecRightAngle) << endl;
-        cout << "Sap toi nga re" << null_count++ << endl;
-        CarControl::preSpeed = TURN_SPEED;
-        TRAFFIC_SIGN temp;
-        temp = DetectSign::get_traffic_sign(true);
-        //temp = TURN_RIGHT;
-        //temp = TURN_LEFT;
-        //temp = TURN_RIGHT;
-        if (temp == ERROR) {
-            cout << "Check haar path" << endl;
-            return;
-        }
-        else if (temp != NONE) {
-            turn = temp;
-            cooldown = TRAFFIC_SIGN_COOLDOWN;
-        }
-        if (cooldown > 0 && turn != NONE) cooldown = TRAFFIC_SIGN_COOLDOWN;
-        //else if (!cooldown) turn = NONE;
-        if (turn == NONE) {
-            cout << "Di thang" << endl;
+    
+    #if TURN_METHOD == VECTOR_TURN
+        if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 ||
+            vecLeftAngle.dot(vecRightAngle) < 0.99 ||
+            vecLeftAngle.dot(vecLeftSpeed) < 0.99 ||
+            vecRightAngle.dot(vecRightSpeed) < 0.99 ||
+            (detect->getLeftLaneRaw().size() <= 25 && detect->getRightLaneRaw().size() <= 25)){
+            cout << vecLeftSpeed.dot(vecRightSpeed) << " " << vecLeftAngle.dot(vecRightAngle) << endl;
+            cout << "Sap toi nga re" << null_count++ << endl;
             
+            CarControl::preSpeed = TURN_SPEED;
+            TRAFFIC_SIGN temp;
+            temp = DetectSign::get_traffic_sign(true);
+            //temp = TURN_RIGHT;
+            //temp = TURN_LEFT;
+            //temp = TURN_RIGHT;
+            if (temp == ERROR) {
+                cout << "Check haar path" << endl;
+                return;
+            }
+            else if (temp != NONE) {
+                turn = temp;
+                cooldown = TRAFFIC_SIGN_COOLDOWN;
+            }
+            if (cooldown > 0 && turn != NONE) cooldown = TRAFFIC_SIGN_COOLDOWN;
+            //else if (!cooldown) turn = NONE;
+            if (turn == NONE) {
+                cout << "Di thang" << endl;
+                
+                if (detect->there_is_middle_lane()) {
+                    vector<Point> middle = detect->getMiddleLane();
+                    //    //Point middleLanePnt;
+                    if (i >= 0) {
+                        int k = i;        
+                        while (k < middle.size()){
+                            if (middle[k] != DetectLane::null) {
+                                //cout << "hi*********************************************************" << endl;
+                                CarControl::preSteer = middle[k] ;
+                                break;
+                            }
+                            k++;
+                        }
+                //        //= middleLanePnt;
+                    }
+                //    //else CarControl::preSteer = LeftBelowAngleA;
+                }
+                //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
+                else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+            }
+            else if(turn == TURN_LEFT)  {
+                cout << "Re trai" << endl;
+                float min_vec = min(min(vecRightAngle[0], vecLeftAngle[0]), min(vecRightSpeed[0], vecLeftSpeed[0]));
+                if (min_vec > 0){
+                    CarControl::preSteer = craftPoint(carPos, -50.);
+                }
+                else{
+                if (min_vec == vecLeftAngle[0])
+                    CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
+                else if (min_vec == vecLeftSpeed[0]) 
+                    CarControl::preSteer = craftPoint(carPos, vecLeftSpeed);
+                else if (min_vec == vecRightAngle[0])
+                    CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+                else 
+                    CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
+                }
+                //if (vecLeftAngle[0] < vecRightAngle[0]) ;
+                //else CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+                //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) 
+                //LeftBelowAngleA + Point(laneWidth / 2, 0);
+                //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 - 20, 300 - 10);
+                //cout << preSteer << endl;
+                //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
+            }
+            else  {
+                cout << "Re phai" << endl;
+                float max_vec = max(max(vecRightAngle[0], vecLeftAngle[0]), max(vecRightSpeed[0], vecLeftSpeed[0]));
+                if (max_vec < 0){
+                    CarControl::preSteer = craftPoint(carPos, 50.);
+                }
+                else{
+                if (max_vec == vecRightAngle[0])
+                    CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+                else if (max_vec == vecRightSpeed[0]) 
+                    CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
+                else if (max_vec == vecLeftAngle[0])
+                    CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
+                else 
+                    CarControl::preSteer = craftPoint(carPos, vecLeftSpeed);
+                }
+                // Post 50 when center angle too clese
+                //cout << preSteer << endl;
+                //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
+                //if (vecLeftAngle[0] < vecRightAngle[0]) CarControl::preSteer = craftPoint(carPos, vecRightAngle);
+                //else CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
+                //cout << vecLeftAngle << vecRightAngle << errorAngle(preSteer) << endl;
+                //CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
+                //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 + 20, 300 - 10);
+            }
+            //CarControl::maskROI = &maskRoiIntersection;
+            setROI(true);
+        }
+        else {
             if (detect->there_is_middle_lane()) {
                 vector<Point> middle = detect->getMiddleLane();
                 //    //Point middleLanePnt;
@@ -502,8 +579,8 @@ void CarControl::driverCar(DetectLane* detect){
                     int k = i;        
                     while (k < middle.size()){
                         if (middle[k] != DetectLane::null) {
+                            CarControl::preSteer = middle[k];
                             //cout << "hi*********************************************************" << endl;
-                            CarControl::preSteer = middle[k] ;
                             break;
                         }
                         k++;
@@ -514,98 +591,74 @@ void CarControl::driverCar(DetectLane* detect){
             }
             //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
             else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+            
+            if (abs(errorAngle(CarControl::preSteer)) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
+            else CarControl::preSpeed = SLOW_SPEED;
+            //cout << abs(error) << endl;
+            //CarControl::preSpeed = NORMAL_SPEED;
+            //CarControl::maskROI = &maskRoiLane;
+            setROI(false);
+            //turn = NONE;
+            if (cooldown > 0) cooldown--;
+            else if (!cooldown) turn = NONE;
+            /*
+            if (RightBelow != DetectLane::null && LeftBelow != DetectLane::null)
+                CarControl::preSteer = (RightBelow + LeftBelow) / 2;
+            else if (RightBelow != DetectLane::null)
+                CarControl::preSteer = RightBelow - Point(laneWidth / 2, 0);
+            else if (LeftBelow != DetectLane::null)
+                CarControl::preSteer = LeftBelow + Point(laneWidth / 2, 0);
+            */
         }
-        else if(turn == TURN_LEFT)  {
-            cout << "Re trai" << endl;
-            float min_vec = min(min(vecRightAngle[0], vecLeftAngle[0]), min(vecRightSpeed[0], vecLeftSpeed[0]));
-            if (min_vec > 0){
-                CarControl::preSteer = craftPoint(carPos, -50.);
+    #elif TURN_METHOD == STICK_LANE
+        if (vecLeftSpeed.dot(vecRightSpeed) < 0.99 ||
+            vecLeftAngle.dot(vecRightAngle) < 0.99 ||
+            vecLeftAngle.dot(vecLeftSpeed) < 0.99 ||
+            vecRightAngle.dot(vecRightSpeed) < 0.99 ||
+            (detect->getLeftLaneRaw().size() <= 15 && detect->getRightLaneRaw().size() <= 15)){
+            cout << vecLeftSpeed.dot(vecRightSpeed) << " " << vecLeftAngle.dot(vecRightAngle) << endl;
+            cout << "Sap toi nga re" << null_count++ << endl;
+            CarControl::preSpeed = TURN_SPEED;
+            TRAFFIC_SIGN temp;
+            temp = DetectSign::get_traffic_sign(true);
+            //temp = TURN_RIGHT;
+            //temp = TURN_LEFT;
+            //temp = TURN_RIGHT;
+            if (temp == ERROR) {
+                cout << "Check haar path" << endl;
+                return;
             }
-            else{
-            if (min_vec == vecLeftAngle[0])
-                CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
-            else if (min_vec == vecLeftSpeed[0]) 
-                CarControl::preSteer = craftPoint(carPos, vecLeftSpeed);
-            else if (min_vec == vecRightAngle[0])
-                CarControl::preSteer = craftPoint(carPos, vecRightAngle);
-            else 
-                CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
+            else if (temp != NONE) {
+                turn = temp;
+                cooldown = TRAFFIC_SIGN_COOLDOWN;
             }
-            //if (vecLeftAngle[0] < vecRightAngle[0]) ;
-            //else CarControl::preSteer = craftPoint(carPos, vecRightAngle);
-            //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) 
-            //LeftBelowAngleA + Point(laneWidth / 2, 0);
-            //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 - 20, 300 - 10);
-            //cout << preSteer << endl;
-            //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
+            if (cooldown > 0 && turn != NONE) cooldown = TRAFFIC_SIGN_COOLDOWN;
+            //else if (!cooldown) turn = NONE;
+            if (turn == NONE) {
+                cout << "Di thang" << endl;
+                CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+            }
+            else if(turn == TURN_LEFT)  {
+                cout << "Re trai" << endl;
+                CarControl::preSteer = LeftBelowAngleA + Point(laneWidth / 2, 0);
+            }
+            else  {
+                cout << "Re phai" << endl;
+                CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
+            }
+            //CarControl::maskROI = &maskRoiIntersection;
+            setROI(true);
         }
-        else  {
-            cout << "Re phai" << endl;
-            float max_vec = max(max(vecRightAngle[0], vecLeftAngle[0]), max(vecRightSpeed[0], vecLeftSpeed[0]));
-            if (max_vec < 0){
-                CarControl::preSteer = craftPoint(carPos, 50.);
-            }
-            else{
-            if (max_vec == vecRightAngle[0])
-                CarControl::preSteer = craftPoint(carPos, vecRightAngle);
-            else if (max_vec == vecRightSpeed[0]) 
-                CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
-            else if (max_vec == vecLeftAngle[0])
-                CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
-            else 
-                CarControl::preSteer = craftPoint(carPos, vecLeftSpeed);
-            }
-            // Post 50 when center angle too clese
-            //cout << preSteer << endl;
-            //cout << min(errorAngle(CarControl::preSteer), (float) 50 *(errorAngle(CarControl::preSteer) > 0)) << endl;
-            //if (vecLeftAngle[0] < vecRightAngle[0]) CarControl::preSteer = craftPoint(carPos, vecRightAngle);
-            //else CarControl::preSteer = craftPoint(carPos, vecLeftAngle);
-            //cout << vecLeftAngle << vecRightAngle << errorAngle(preSteer) << endl;
-            //CarControl::preSteer = RightBelowAngleA - Point(laneWidth / 2, 0);
-            //if (dist_point_point(CarControl::preSteer, carPos) < CAR_POS_RADIUS) CarControl::preSteer = Point(120 + 20, 300 - 10);
+        else {
+            CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
+            if (abs(errorAngle(CarControl::preSteer)) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
+            else CarControl::preSpeed = SLOW_SPEED;
+            setROI(false);
+            //turn = NONE;
+            if (cooldown > 0) cooldown--;
+            else if (!cooldown) turn = NONE;
         }
-        //CarControl::maskROI = &maskRoiIntersection;
-        setROI(true);
-    }
-    else {
-        if (detect->there_is_middle_lane()) {
-            vector<Point> middle = detect->getMiddleLane();
-            //    //Point middleLanePnt;
-            if (i >= 0) {
-                int k = i;        
-                while (k < middle.size()){
-                    if (middle[k] != DetectLane::null) {
-                        CarControl::preSteer = middle[k];
-                        //cout << "hi*********************************************************" << endl;
-                        break;
-                    }
-                    k++;
-                }
-        //        //= middleLanePnt;
-            }
-        //    //else CarControl::preSteer = LeftBelowAngleA;
-        }
-        //else if (detect->getMiddleLaneSide() == RIGHT) CarControl::preSteer = RightBelowAngleA;
-        else CarControl::preSteer = (LeftBelowAngleA + RightBelowAngleA) / 2;
-        
-        if (abs(errorAngle(CarControl::preSteer)) < SMALL_TURN_ANGLE_UPPER_LIM) CarControl::preSpeed = FAST_SPEED;
-        else CarControl::preSpeed = SLOW_SPEED;
-        //cout << abs(error) << endl;
-        //CarControl::preSpeed = NORMAL_SPEED;
-        //CarControl::maskROI = &maskRoiLane;
-        setROI(false);
-        //turn = NONE;
-        if (cooldown > 0) cooldown--;
-        else if (!cooldown) turn = NONE;
-        /*
-        if (RightBelow != DetectLane::null && LeftBelow != DetectLane::null)
-            CarControl::preSteer = (RightBelow + LeftBelow) / 2;
-        else if (RightBelow != DetectLane::null)
-            CarControl::preSteer = RightBelow - Point(laneWidth / 2, 0);
-        else if (LeftBelow != DetectLane::null)
-            CarControl::preSteer = LeftBelow + Point(laneWidth / 2, 0);
-        */
-    }
+    #endif
     //cout << turn << endl;
     //cout << CarControl::preSteer << endl;
     Mat test = Mat::zeros(Size(240,320), CV_8UC3);

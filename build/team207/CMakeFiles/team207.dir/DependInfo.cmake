@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/carcontrol.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/carcontrol.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/cv_bridge.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/cv_bridge/cv_bridge.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/cv_bridge/rgb_colors.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o"
+  "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_obstacle.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_traffic_sign.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/detect_traffic_sign.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detectlane.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/detectlane.cpp.o"
   "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/polyfit.cpp" "/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/build/team207/CMakeFiles/team207.dir/src/polyfit.cpp.o"

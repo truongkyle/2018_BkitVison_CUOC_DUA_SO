@@ -10,6 +10,8 @@
 #include "detect_traffic_sign.h"
 #include "polyfit.h"
 #include "detect_obstacle.h"
+#include "my_define.h"
+
 
 #define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
@@ -26,6 +28,7 @@ VideoCapture capture(VIDEO_PATH);
 //VideoWriter video("/home/hoquangnam/Documents/CuocDuaSo/outcpp2.avi",CV_FOURCC('M','J','P','G'),25, Size(320,240));
 DetectLane *detect;
 CarControl *car;
+DetectObstacle *obstacle;
 int skipFrame = 1;
 void detectAndDisplay(Mat frame);
 void draw_polygon(Mat& dst, const vector<Point>);
@@ -38,6 +41,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg){
         Mat& src = cv_ptr->image;
         DetectSign::store_image(src);
         //waitKey(1);
+        obstacle->store_image(src);
         detect->update(src);
         car->driverCar(detect);
         draw_polygon(src, CarControl::get_list_point_ROI());
@@ -65,8 +69,10 @@ void videoProcess(){
         //cout << "test" << endl;
         //DetectSign::get_traffic_sign(src, true);
         DetectSign::store_image(src);
+        obstacle->store_image(src);
         detect->update(src);
         car->driverCar(detect);
+        obstacle->get_rock(true);
         draw_polygon(src, CarControl::get_list_point_ROI());
         cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         imshow("View", src);
@@ -81,6 +87,7 @@ void imageProcess(){
             return;
         //DetectSign::get_traffic_sign(src, true);
         DetectSign::store_image(src);
+        obstacle->store_image(src);
         detect->update(src);
         car->driverCar(detect);
         draw_polygon(src, CarControl::get_list_point_ROI());
@@ -96,8 +103,11 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "image_listener");
     cv::namedWindow("View");
     //cv::namedWindow("BinaryRoad");
-    //cv::namedWindow("ThresholdRoad");
-    cv::namedWindow("ThresholdLane");
+    #if DETECT_METHOD == ROAD_COLOR
+        cv::namedWindow("ThresholdRoad");
+    #elif DETECT_METHOD == WHITE_LANE
+        cv::namedWindow("ThresholdLane");
+    #endif
     //cv::namedWindow("Bird View Road");
     cv::namedWindow("Bird View Lane");
     //cv::namedWindow("Bird View Filled");
@@ -110,6 +120,7 @@ int main(int argc, char **argv){
     cv::namedWindow("Test");
     CarControl::init();
     DetectSign::init(HAAR_TRAFFIC_SIGN_LEFT_DIR, HAAR_TRAFFIC_SIGN_RIGHT_DIR);
+    obstacle = new DetectObstacle();
     detect = new DetectLane();
     car = new CarControl();
     detect->init();

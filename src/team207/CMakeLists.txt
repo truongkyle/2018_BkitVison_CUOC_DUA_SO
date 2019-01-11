@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}
   src/polyfit.cpp
   src/cv_bridge/cv_bridge.cpp
   src/cv_bridge/rgb_colors.cpp
+  src/detect_obstacle.cpp
 )
 
 add_executable(${PROJECT_NAME}_node src/main.cpp)

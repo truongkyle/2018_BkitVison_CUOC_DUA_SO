@@ -138,10 +138,10 @@ private:
     //int maxLaneNormalTh[3] = {179, 255, 184};
     //int minThreshold[3] = {55, 93, 0};
 
-    int minRoadNormalTh[3] = {34, 0, 0};
-    int maxRoadNormalTh[3] = {96, 93, 14};
-    int minRoadShadowTh[3] = {83, 0, 15};
-    int maxRoadShadowTh[3] = {179, 127, 67};
+    int minRoadNormalTh[3] = {41,5,53};
+    int maxRoadNormalTh[3] = {93,31,102};
+    int minRoadShadowTh[3] = {70,28,12};
+    int maxRoadShadowTh[3] = {137,145,74};
     int binaryThreshold = 180;
 
     int shadowParam = 40;

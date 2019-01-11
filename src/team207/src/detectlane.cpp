@@ -1,5 +1,6 @@
 #include "carcontrol.h"
 #include "detectlane.h"
+#include "my_define.h"
 #define MAX_CONTINUITY_DIST 3
 #define MIN_DIST_SEGMENT 13
 #define UPPER_MAX_SEGMENT_SIZE 8
@@ -54,20 +55,20 @@ DetectLane::DetectLane() {
     cvCreateTrackbar("Low-H-roadNormal", "ThresholdRoad", &minRoadNormalTh[0], 179);
     cvCreateTrackbar("High-H-roadNormal", "ThresholdRoad", &maxRoadNormalTh[0], 179);
 
-    cvCreateTrackbar("Low-L-roadNormal", "ThresholdRoad", &minRoadNormalTh[1], 255);
-    cvCreateTrackbar("High-L-roadNormal", "ThresholdRoad", &maxRoadNormalTh[1], 255);
+    cvCreateTrackbar("Low-S-roadNormal", "ThresholdRoad", &minRoadNormalTh[1], 255);
+    cvCreateTrackbar("High-S-roadNormal", "ThresholdRoad", &maxRoadNormalTh[1], 255);
 
-    cvCreateTrackbar("Low-S-roadNormal", "ThresholdRoad", &minRoadNormalTh[2], 255);
-    cvCreateTrackbar("High-S-roadNormal", "ThresholdRoad", &maxRoadNormalTh[2], 255);
+    cvCreateTrackbar("Low-V-roadNormal", "ThresholdRoad", &minRoadNormalTh[2], 255);
+    cvCreateTrackbar("High-V-roadNormal", "ThresholdRoad", &maxRoadNormalTh[2], 255);
 
     cvCreateTrackbar("Low-H-roadShadow", "ThresholdRoad", &minRoadShadowTh[0], 179);
     cvCreateTrackbar("High-H-roadShadow", "ThresholdRoad", &maxRoadShadowTh[0], 179);
 
-    cvCreateTrackbar("Low-L-roadShadow", "ThresholdRoad", &minRoadShadowTh[1], 255);
-    cvCreateTrackbar("High-L-roadShadow", "ThresholdRoad", &maxRoadShadowTh[1], 255);
+    cvCreateTrackbar("Low-S-roadShadow", "ThresholdRoad", &minRoadShadowTh[1], 255);
+    cvCreateTrackbar("High-S-roadShadow", "ThresholdRoad", &maxRoadShadowTh[1], 255);
 
-    cvCreateTrackbar("Low-S-roadShadow", "ThresholdRoad", &minRoadShadowTh[2], 255);
-    cvCreateTrackbar("High-S-roadShadow", "ThresholdRoad", &maxRoadShadowTh[2], 255);
+    cvCreateTrackbar("Low-V-roadShadow", "ThresholdRoad", &minRoadShadowTh[2], 255);
+    cvCreateTrackbar("High-V-roadShadow", "ThresholdRoad", &maxRoadShadowTh[2], 255);
 
     //cvCreateTrackbar("Shadow Param", "Threshold", &shadowParam, 255);
 
@@ -107,9 +108,14 @@ void DetectLane::update(const Mat &src){
     //Mat edges;
     //Canny(src, edges, 100, 200);
     //cv::imshow("Canny", edges);
-    Mat imgLane;//, imgRoad;
-    preProcess(src, imgLane);
-    vector<Mat> layers1 = splitLayer(imgLane);
+    Mat imgLane, imgRoad;
+    #if DETECT_METHOD == WHITE_LANE
+        preProcess(src, imgLane);
+        vector<Mat> layers1 = splitLayer(imgLane);
+    #elif DETECT_METHOD == ROAD_COLOR
+        imgRoad = preProcess(src);
+        vector<Mat> layers1 = splitLayer(imgRoad);
+    #endif
     vector<vector<Point> > points1 = centerRoadSide(layers1);
     // vector<Mat> layers2 = splitLayer(img, HORIZONTAL);
     // vector<vector<Point> > points2 = centerRoadSide(layers2, HORIZONTAL)
@@ -126,8 +132,13 @@ void DetectLane::update(const Mat &src){
     //cv::imshow("Point", temp3d_1);
     //detectLeftRight(points1);
     //detectLeftRight(points1, leftLaneRaw, rightLaneRaw);
-    detectLane(points1, leftLaneRaw, rightLaneRaw, middleLaneRaw);
-    updateLane(leftLaneRaw, rightLaneRaw, middleLaneRaw, leftLane, rightLane, middleLane);
+    #if DETECT_METHOD == WHITE_LANE
+        detectLane(points1, leftLaneRaw, rightLaneRaw, middleLaneRaw);
+        updateLane(leftLaneRaw, rightLaneRaw, middleLaneRaw, leftLane, rightLane, middleLane);
+    #elif DETECT_METHOD == ROAD_COLOR
+        detectLeftRight(points1, leftLaneRaw, rightLaneRaw);
+        updateLeftRight(leftLaneRaw, rightLaneRaw, leftLane, rightLane);
+    #endif
     Mat birdView, lane;
     //birdView = Mat::zeros(Size(BIRDVIEW_WIDTH, BIRDVIEW_HEIGHT), CV_8UC3);
     lane = Mat::zeros(Size(BIRDVIEW_WIDTH, BIRDVIEW_HEIGHT), CV_8UC3);
@@ -354,36 +365,41 @@ Mat DetectLane::preProcess(const Mat &src){
     cv::bitwise_and(CarControl::getROI(), imgHSV, imgHSV);
 //cout << "test";
     Mat mask1;
-    cv::inRange(imgHSV, Scalar(41,5,53), Scalar(93,31,102), mask1);
+    cv::inRange(imgHSV, ConvertArraytoScalar(minRoadNormalTh), ConvertArraytoScalar(maxRoadNormalTh), mask1);
     //Mat mask2;
     //cv::inRange(imgHSV, Scalar(20,56,43), Scalar(35,77,64), mask2);
     Mat maskShadow;
-    cv::inRange(imgHSV, Scalar(70,28,12), Scalar(137,145,74), maskShadow);
+    cv::inRange(imgHSV, ConvertArraytoScalar(minRoadShadowTh), ConvertArraytoScalar(maxRoadShadowTh), maskShadow);
     Mat maskCombined;
     maskCombined = mask1 | maskShadow;
 
     vector<vector<Point>> contours;
     cv::findContours(maskCombined, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    //cout << contours.size() << endl;
     //cout << "test";                CarControl::preSteer = craftPoint(carPos, vecRightSpeed);
-    vector<Point> max_contour;
+    //vector<Point> max_contour;
+    int max_contour = -1;
     double max_area = 0;
     for (int i = 0; i < contours.size(); i++){
         double cnt_area = cv::contourArea(contours[i]);
         if (cnt_area > max_area){
             max_area = cnt_area;
-            max_contour = contours[i];
+            max_contour = i;
         }
     }
-    vector<vector<Point>> max_contour_dummy;
-    max_contour_dummy.push_back(max_contour);
+    //vector<vector<Point>> max_contour_dummy;
+    //max_contour_dummy.push_back(max_contour);
+    //cout << max_contour_dummy.size() << endl;
     maskCombined = Mat::zeros(Size(320,240), CV_8U);
-    cv::drawContours(maskCombined, max_contour_dummy, -1, 255, 2);  
+    //cout << max_contour << endl;
+    if (max_contour >= 0) cv::drawContours(maskCombined, vector<vector<Point>>{contours[max_contour]}, -1, Scalar(255), 2);  
+    //cout << contours.size() << endl;
     //cv::line(maskEdge, Point(0,240), Point(0,0), 0, 4, CV::LINE_AA)
-    imshow("Binary", maskCombined);
+    imshow("ThresholdRoad", maskCombined);
     // for (int i = 0; i < points2.size(); i++)
     dst = birdViewTranform(maskCombined);
     fillLane(dst);
-    imshow("Bird View", dst);
+    imshow("Bird View Lane", dst);
     return dst;
     
 }

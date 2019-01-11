@@ -5,6 +5,7 @@ team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/C
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/detect_obstacle.h
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/detect_traffic_sign.h
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/detectlane.h
+team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/my_define.h
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/polyfit.h
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/main.cpp
 team207/CMakeFiles/team207_node.dir/src/main.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
