@@ -108,6 +108,8 @@ public:
     }
     void transform(Point2f* src_vertices, Point2f* dst_vertices, const Mat& src, Mat &dst);
     //enum MIDDLE
+    bool is_left_left = true;
+    bool is_right_right = true;
 private:
     Mat preProcess(const Mat &src);
     void preProcess(const Mat &src, Mat& imgRoad, Mat& imgLane);

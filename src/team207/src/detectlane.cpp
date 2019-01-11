@@ -1311,6 +1311,8 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                     rightRaw = lane1;
                     //cout << "TH1<<<<<<<<<<<<<<<<<<<<<<<<<" << endl;
                 }
+                is_left_left = false;
+                is_right_right = false;
                 //middleRaw.clear();
                 //middleLaneSide = UNDEFINED;
             }
@@ -1319,12 +1321,16 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                 rightRaw = lane2;
                 if (potential_middle1 && !potential_middle2){
                     middleRaw = lane1;
-                    //middleLaneSide = LEFT;
+                    middleLaneSide = LEFT;
+                    is_left_left = false;
+                    is_right_right = true;
                 //    rightRaw = lane2;
                 }
                 else if (!potential_middle1 && potential_middle2){
                     middleRaw = lane2;
-                    //middleLaneSide = RIGHT;
+                    middleLaneSide = RIGHT;
+                    is_left_left = true;
+                    is_right_right = false;
                 //    leftRaw = lane1;
                 }
                 //else if (potential_middle1 && potential_middle2){
@@ -1338,7 +1344,9 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                 else if (!potential_middle1 && !potential_middle2){
                 //    leftRaw = lane1;
                 //    rightRaw = lane2;
-                //    middleLaneSide = UNDEFINED;
+                    is_left_left = true;
+                    is_right_right = true;
+                    middleLaneSide = UNDEFINED;
                     middleRaw.clear();
                 }
                 //cout << "TH2..............................." << endl;
@@ -1351,6 +1359,8 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                     rightRaw = lane2;
                     //cout << "TH3***********************" << endl;
                 }
+                is_left_left = false;
+                is_right_right = false;
                 //middleRaw.clear();
                 //middleLaneSide = UNDEFINED;
             }
@@ -1358,13 +1368,17 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                 leftRaw = lane2;
                 rightRaw = lane1;
                 if (!potential_middle1 && potential_middle2){
+                    is_left_left = false;
+                    is_right_right = true;
                     middleRaw = lane2;
-                //    middleLaneSide = LEFT;
+                    middleLaneSide = LEFT;
                 //    leftRaw = lane1;
                 }
                 else if (potential_middle1 && !potential_middle2){
+                    is_left_left = true;
+                    is_right_right = false;
                     middleRaw = lane1;
-                //    middleLaneSide = RIGHT;
+                    middleLaneSide = RIGHT;
                 //    rightRaw = lane2;
                 }
                 //else if (potential_middle1 && potential_middle2){
@@ -1378,7 +1392,9 @@ void DetectLane::detectLane(const vector<vector<Point> > &points, vector<Point>&
                 else if (!potential_middle1 && !potential_middle2){
                 //    leftRaw = lane1;
                 //    rightRaw = lane2;
-                //    middleLaneSide = UNDEFINED;
+                    is_left_left = true;
+                    is_right_right = true;
+                    middleLaneSide = UNDEFINED;
                     middleRaw.clear();
                 }
                 /*  

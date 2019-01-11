@@ -502,7 +502,9 @@ team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o: /usr/local/includ
 team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o: /usr/local/include/opencv2/viz/vizcore.hpp
 team207/CMakeFiles/team207.dir/src/cv_bridge/rgb_colors.cpp.o: /usr/local/include/opencv2/viz/widgets.hpp
 
+team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/carcontrol.h
 team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/detect_obstacle.h
+team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/include/detectlane.h
 team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_obstacle.cpp
 team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /opt/ros/melodic/include/ros/advertise_options.h
 team207/CMakeFiles/team207.dir/src/detect_obstacle.cpp.o: /opt/ros/melodic/include/ros/advertise_service_options.h

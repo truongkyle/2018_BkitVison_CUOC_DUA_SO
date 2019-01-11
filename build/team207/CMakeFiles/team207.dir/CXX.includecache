@@ -145,6 +145,10 @@ opencv2/core/core.hpp
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_obstacle.cpp
 detect_obstacle.h
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_obstacle.h
+detectlane.h
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detectlane.h
+carcontrol.h
+/home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/carcontrol.h
 
 /home/hoquangnam/Documents/CuocDuaSo/test_streaming_ros/src/team207/src/detect_traffic_sign.cpp
 detect_traffic_sign.h

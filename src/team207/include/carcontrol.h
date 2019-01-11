@@ -16,7 +16,9 @@ using namespace std;
 using namespace cv;
 
 class DetectLane;
+class DetectObstacle;
 Point unWarpPoint(Point& pnt, Mat& warpMatrixInv);
+vector<Point> unWarpPoint(vector<Point>& pnt, Mat& warpMatrixInv);
 extern vector<Point> list_point_ROI;
 extern vector<Point> list_point_noROI;
 class CarControl 
@@ -27,6 +29,7 @@ public:
     void driverCar(const vector<Point> &left, const vector<Point> &right, float velocity);
     void driverCar(DetectLane* detect);
     void driverCar(DetectLane* detect, const Mat& src);
+    void driverCar(DetectLane* detect, DetectObstacle* obstacle);
     static void init();
     static Mat& getROI1D(){
         return *maskROI1D;
@@ -56,6 +59,7 @@ public:
     Point& get_center_road(){
         return preSteer;
     }
+    bool is_steer_middle = false;
 private:
     float errorAngle(const Point &dst);
     float errorAngle(const Point &, const Point &);

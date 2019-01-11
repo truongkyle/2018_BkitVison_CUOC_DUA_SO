@@ -13,14 +13,15 @@
 #include "my_define.h"
 
 
-#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
+#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp - cds test.avi"
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
-#define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image/IMG_0659.jpg"
-#define VIDEO_OR_IMAGE "video" // Or "image"
+#define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image2/IMG_1051.jpg"
+#define VIDEO_OR_IMAGE "image" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_left_2.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_right_2.xml"
-#define HAAR_ROCK_DIR ros::package::getPath("team207") + "/Obstacle/cascade_rock.xml"
-#define STREAM true
+#define HAAR_obstacle_DIR ros::package::getPath("team207") + "/Obstacle/cascade_rock.xml"
+#define HAAR_STACKING_DIR ros::package::getPath("team207") + "/Obstacle/cascade_stacking_box_2.xml"
+#define STREAM false
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -43,7 +44,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg){
         //waitKey(1);
         obstacle->store_image(src);
         detect->update(src);
-        car->driverCar(detect);
+        car->driverCar(detect, obstacle);
+        //obstacle->get_obstacle(true);
         draw_polygon(src, CarControl::get_list_point_ROI());
         cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         cv::imshow("View", src);
@@ -71,13 +73,13 @@ void videoProcess(){
         DetectSign::store_image(src);
         obstacle->store_image(src);
         detect->update(src);
-        car->driverCar(detect);
-        obstacle->get_rock(true);
+        car->driverCar(detect, obstacle);
+        //obstacle->get_obstacle(true);
         draw_polygon(src, CarControl::get_list_point_ROI());
         cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         imshow("View", src);
         //waitKey(0);
-        waitKey(30);
+        waitKey(0);
     }
 }
 void imageProcess(){
@@ -89,11 +91,12 @@ void imageProcess(){
         DetectSign::store_image(src);
         obstacle->store_image(src);
         detect->update(src);
-        car->driverCar(detect);
+        car->driverCar(detect, obstacle);
+        //obstacle->get_obstacle(true);
         draw_polygon(src, CarControl::get_list_point_ROI());
         cv::circle(src, unWarpPoint(car->get_center_road(), detect->getWarpMatrixInv()), 1, Scalar(0,0,255), 2);
         cv::imshow("View", src); //cv::imshow("Test", CarControl::maskROI);
-        waitKey(30);
+        waitKey(0);
         //detectAndDisplay(src);
         //waitKey(30);
     }
@@ -124,6 +127,7 @@ int main(int argc, char **argv){
     detect = new DetectLane();
     car = new CarControl();
     detect->init();
+    obstacle->init(HAAR_obstacle_DIR, HAAR_STACKING_DIR);
     if (STREAM){
         cv::startWindowThread();
 
