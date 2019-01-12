@@ -1712,14 +1712,16 @@ bool check_segment_list(vector<vector<Point>>& segment_list){
         }
         else return false;
     }
-    int total_pnt = 0;
-    for (int i = list_size - 1; i >= 0; i--){
-        total_pnt += segment_list[i].size();
-        //cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
-    }
+    //int total_pnt = 0;
+    //for (int i = list_size - 1; i >= 0; i--){
+    //    total_pnt += segment_list[i].size();
+    //    //cout << i << " " << segment_list[i].size() << " " << segment_list[i - 1].size() << " " << (i > 1 && ((int)segment_list[i].size() - (int) segment_list[i - 1].size() > 3)) << " - " << (int) (segment_list[i].size() - segment_list[i - 1].size()) << endl;
+    //}
     //cout << total_pnt << "*" << endl;
 
     //****Tính trung bình độ dài segment */
+    //float average_pnt = total_pnt / segment_list.size();
+    //if (average_pnt < 2. && average_pnt > 4) return false;
 
     if (max_segment_size < SEGMENT_SIZE_REQUIREMENT) return false;
     return true;

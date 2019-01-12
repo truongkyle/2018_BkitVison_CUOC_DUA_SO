@@ -10,13 +10,15 @@
 
 using namespace std;
 using namespace cv;
-#define DISTANCE_SLICE_TO_CHANGE_STEER 25
+
 vector<Point> unWarpPoint(vector<Point>& pnt, Mat& warpMatrixInv);
 class DetectLane;
 class Obstacle{
     private:
         vector<Rect> obstacle_coordinate;
         vector<vector<Point>> resultPoint;
+        Point lastSteer;
+        int cooldown = 0;
     public:
         void set(vector<Rect>& coordinate){
             obstacle_coordinate = coordinate;
@@ -33,7 +35,7 @@ class Obstacle{
 };
 class DetectObstacle {
     public:
-        void init(const string& rock_dir, const string& stacking_dir);//, const string& right_haar_dir);
+        void init(const string& rock_dir, const string& stacking_dir, const string& smallbox_dir);//, const string& right_haar_dir);
         Obstacle get_obstacle(bool draw=false);
         void store_image(Mat& image);
         Mat& get_image();
@@ -43,6 +45,7 @@ class DetectObstacle {
         //Obstacle obstacle;
         CascadeClassifier rock_detect;
         CascadeClassifier stacking_detect;
+        CascadeClassifier small_box_detect;
         bool check_obstacle(Obstacle& coordinate, bool draw=false);
         //static CascadeClassifier right_traffic_sign_detect;
         //static bool check_traffic_sign_left(bool draw=false);

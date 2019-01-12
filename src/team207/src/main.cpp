@@ -16,12 +16,13 @@
 #define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp - cds test.avi"
 //#define VIDEO_PATH "/home/hoquangnam/Documents/CuocDuaSo/outcpp.avi"
 #define IMAGE_PATH "/home/hoquangnam/Documents/CuocDuaSo/Lane_image2/IMG_1051.jpg"
-#define VIDEO_OR_IMAGE "image" // Or "image"
+#define VIDEO_OR_IMAGE "video" // Or "image"
 #define HAAR_TRAFFIC_SIGN_LEFT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_left_2.xml"
 #define HAAR_TRAFFIC_SIGN_RIGHT_DIR ros::package::getPath("team207") + "/Traffic sign/cascade_right_2.xml"
-#define HAAR_obstacle_DIR ros::package::getPath("team207") + "/Obstacle/cascade_rock.xml"
+#define HAAR_ROCK_DIR ros::package::getPath("team207") + "/Obstacle/cascade_rock.xml"
 #define HAAR_STACKING_DIR ros::package::getPath("team207") + "/Obstacle/cascade_stacking_box_2.xml"
-#define STREAM false
+#define HAAR_SMALLBOX_DIR ros::package::getPath("team207") + "/Obstacle/cascade_small_box.xml"
+#define STREAM true
 //cv::polyfit();
 //int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 //int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -54,7 +55,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg){
         //cv::imwrite(path, cv_ptr->image);
         //video.write(cv_ptr->image);
         //count++;
-        cv::waitKey(30);
+        cv::waitKey(1);
     }
     catch (cv_bridge::Exception &e){
         ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
@@ -127,7 +128,7 @@ int main(int argc, char **argv){
     detect = new DetectLane();
     car = new CarControl();
     detect->init();
-    obstacle->init(HAAR_obstacle_DIR, HAAR_STACKING_DIR);
+    obstacle->init(HAAR_ROCK_DIR, HAAR_STACKING_DIR, HAAR_SMALLBOX_DIR);
     if (STREAM){
         cv::startWindowThread();
 

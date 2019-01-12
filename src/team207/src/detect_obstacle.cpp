@@ -3,7 +3,8 @@
 #include "carcontrol.h"
 
 //#include "detect_traffic_sign.h"
-
+#define DISTANCE_SLICE_TO_CHANGE_STEER 25
+#define OBSTACLE_COOLDOWN 5
 //cv::CascadeClassifier DetectSign::rock_detect;
 //Mat* DetectSign::image;
 //int DetectObstacle::init_flag = 0;
@@ -13,9 +14,10 @@ void DetectObstacle::store_image(Mat& image){
 Mat& DetectObstacle::get_image(){
     return *(DetectObstacle::image);
 }
-void DetectObstacle::init(const string& rock_dir, const string& stacking_dir){
+void DetectObstacle::init(const string& rock_dir, const string& stacking_dir, const string& small_box_dir){
+    //cout << small_box_dir << endl;
     //cout << rock_dir << stacking_dir << endl;
-    if (rock_detect.load(rock_dir) && stacking_detect.load(stacking_dir)){
+    if (rock_detect.load(rock_dir) && stacking_detect.load(stacking_dir) && small_box_detect.load(small_box_dir)){
         init_flag = 1;
         return;
     }
@@ -40,14 +42,17 @@ bool DetectObstacle::check_obstacle(Obstacle& coordinate, bool draw){
     rock_detect.detectMultiScale(this->get_image(), rock_region, 1.1, 1);
     vector<Rect> stacking_region;
     stacking_detect.detectMultiScale(this->get_image(), stacking_region, 1.1, 1);
-    if (!rock_region.size() && !stacking_region.size()) {
+    vector<Rect> smallbox_region;
+    small_box_detect.detectMultiScale(this->get_image(), smallbox_region, 1.1, 1);
+    if (!rock_region.size() && !stacking_region.size() && !smallbox_region.size()) {
         //obstacle.clear();
         return false;
     }
     vector<Rect> combined;
-    combined.reserve(rock_region.size() + stacking_region.size());
+    combined.reserve(rock_region.size() + stacking_region.size() + smallbox_region.size());
     combined.insert(combined.end(), rock_region.begin(), rock_region.end());
     combined.insert(combined.end(), stacking_region.begin(), stacking_region.end());
+    combined.insert(combined.end(), smallbox_region.begin(), smallbox_region.end());
     if (draw)
         for (const Rect& region : combined)
             cv::rectangle(this->get_image(), region, Scalar(255,255,0), 2);
